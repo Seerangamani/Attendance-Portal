@@ -130,6 +130,7 @@
             right: 65px;
         }
 
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -148,6 +149,8 @@
             margin-bottom: 0.5rem;
             filter: drop-shadow(0 8px 20px rgba(0,0,0,0.3));
             transition: transform 0.3s ease;
+            /* animation: rotate 20s linear infinite; */
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
         }
 
         .center-logo:hover {
@@ -513,7 +516,11 @@
 
   <div class="container">
     <div class="header-section">
-      <img src="images/mmw_logo.png" alt="Logo" class="center-logo">
+        <div class="logo-imgc">
+                  <img src="images/mmw_logo.png" alt="Logo" class="center-logo">
+
+        </div>
+
       <h1 class="main-heading">Attendance Management System</h1>
     </div>
 
@@ -531,8 +538,7 @@
     <div class="dashboard-view">
       <div class="dashboard-header">
         <h2 class="dashboard-title">Attendance Dashboard</h2>
-        
-        <p id="today-date">Today's Overview</p>
+        <p id="today-date">Today's Overview</p>        
       </div>
       <div class="dashboard-stats">
         <div class="stat-card">

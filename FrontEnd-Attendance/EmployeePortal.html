@@ -13,7 +13,7 @@
 
 body {
     font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #3d6db8 50%, #4a7bc8 75%, #5a8fd8 100%);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -37,7 +37,8 @@ body::before {
 }
 
 .header {
-    background: rgba(255, 255, 255, 0.95);
+    /* background: rgba(255, 255, 255, 0.95); */
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -63,13 +64,13 @@ body::before {
 }
 
 .logout-btn {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
     border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 15px;
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
     color: white;
-    font-size: 20px;
+    font-size: 22px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
@@ -78,31 +79,73 @@ body::before {
     justify-content: center;
     position: relative;
     overflow: hidden;
-}
-
-.logout-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.logout-btn:hover::before {
-    left: 100%;
+    border: 2px solid transparent;
 }
 
 .logout-btn:hover {
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .logout-btn:active {
     transform: translateY(-1px) scale(0.98);
 }
+
+.logout-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.5);
+}
+
+.logout-icon {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.logout-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.tooltip {
+    position: absolute;
+    bottom: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.tooltip::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid rgba(0, 0, 0, 0.8);
+}
+
+.logout-btn:hover .tooltip {
+    opacity: 1;
+}
+
 
 .main-container {
     flex: 1;
@@ -674,8 +717,15 @@ button:hover {
         <div class="logo-container">
             <img src="images/mmw_logo.png" alt="MMW Logo" class="logo">
         </div>
-        <button class="logout-btn" onclick="handleLogout()" title="Logout">
-            ⚡
+<button class="logout-btn" onclick="handleLogout()" title="Logout">
+    <div class="logout-icon">
+        <svg viewBox="0 0 24 24">
+            <path d="M17,7L15.59,8.41L17.17,10H9V12H17.17L15.59,13.59L17,15L21,11L17,7M4,5H12V3H4A2,2 0 0,0 2,5V19A2,2 0 0,0 4,21H12V19H4V5Z"/>
+        </svg>
+    </div>
+    <div class="tooltip">Logout</div>
+</button>
+            
         </button>
     </div>
 
