@@ -1,0 +1,662 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition - Permission & Half Day</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1300px;
+            width: 95%;
+            height: 90vh;
+            max-height: 850px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .left-panel {
+            flex: 1;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+        
+        .right-panel {
+            flex: 1.5;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            padding: 12px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .back-button .arrow {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover .arrow {
+            transform: translateX(-3px);
+        }
+
+        .employee-face-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .employee-face-section h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        #employee-face-image {
+            border-radius: 75px;
+            border: 3px solid #e9ecef;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        #employee-info {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .mode-selection {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .mode-selection h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            background: #f8f9fa;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .mode-btn:hover {
+            border-color: #007bff;
+            background: #e3f2fd;
+            color: #007bff;
+        }
+
+        .mode-btn.active {
+            border-color: #007bff;
+            background: #007bff;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .mode-btn.permission.active {
+            border-color: #ffc107;
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .mode-btn.halfday.active {
+            border-color: #17a2b8;
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .current-time {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .time-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .time-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .timing-info {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .timing-info h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .timing-details {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .validation-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .validation-info.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .validation-info h4 {
+            margin: 0 0 10px 0;
+            color: #856404;
+            font-size: 14px;
+        }
+
+        .validation-details {
+            font-size: 12px;
+            color: #856404;
+            line-height: 1.4;
+        }
+        
+        .attendance-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .attendance-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .card-title {
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 26px;
+        }
+        
+        .card-description {
+            color: #666;
+            margin: 0 0 20px 0;
+            font-size: 15px;
+        }
+        
+        .camera-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        #video {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+        
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .action-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            min-width: 140px;
+        }
+        
+        .action-button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        .action-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .action-button.stop {
+            background: #dc3545;
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+        
+        .action-button.stop:hover {
+            background: #c82333;
+            box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
+        }
+        
+        .action-button.capture {
+            background: #28a745;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+        
+        .action-button.capture:hover {
+            background: #218838;
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .action-button.capture:disabled {
+            background: #6c757d;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .matched-employee-info {
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+            border: 2px solid #10b981;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+        
+        .matched-employee-info.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .matched-employee-info h4 {
+            margin: 0 0 10px 0;
+            color: #047857;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .matched-employee-info .details {
+            font-size: 12px;
+            color: #065f46;
+            line-height: 1.4;
+        }
+        
+        .success-message {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+            display: none;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 2px solid #dc3545;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+            display: none;
+            margin-bottom: 10px;
+        }
+
+        .warning-message {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+            display: none;
+            margin-bottom: 10px;
+        }
+        
+        .success-message.show, .error-message.show, .warning-message.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .message-time {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .message-details {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .message-note {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .status-check-info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 2px solid #2196f3;
+            color: #0d47a1;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .status-check-info.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .status-check-info h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .processing-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #0d47a1;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: 95vh;
+                width: 98%;
+            }
+            
+            .left-panel, .right-panel {
+                flex: 1;
+                padding: 15px;
+            }
+            
+            .employee-face-section {
+                margin-bottom: 15px;
+                padding: 15px;
+            }
+            
+            #employee-face-image {
+                width: 100px;
+                height: 100px;
+            }
+            
+            #video {
+                height: 220px;
+            }
+            
+            .card-title {
+                font-size: 22px;
+            }
+
+            .mode-buttons {
+                flex-direction: column;
+            }
+
+            .mode-btn {
+                margin-bottom: 8px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-button {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">
+        <span class="arrow">←</span>
+        <span>Back</span>
+    </button>
+    
+    <div class="container">
+        <!-- Left Panel - Employee Info & Controls -->
+        <div class="left-panel">
+            <!-- Employee Face Section -->
+            <div class="employee-face-section">
+                <h3>Employee Face</h3>
+                <img id="employee-face-image" alt="Employee Face" width="120" height="120" />
+                <div id="employee-info"></div>
+            </div>
+
+            <!-- Mode Selection -->
+            <div class="mode-selection">
+                <h3>Select Check-in Type</h3>
+                <div class="mode-buttons">
+                    <div class="mode-btn permission" onclick="selectMode('permission')">
+                        🔓 Permission
+                    </div>
+                    <div class="mode-btn halfday" onclick="selectMode('halfday')">
+                        🕐 Half Day
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Time Display -->
+            <div class="current-time">
+                <div class="time-label">Current Time</div>
+                <div class="time-value" id="current-time"></div>
+            </div>
+
+            <!-- Timing Information -->
+            <div class="timing-info">
+                <h4 id="timing-title">Select Check-in Type</h4>
+                <div class="timing-details" id="timing-details">
+                    Please select Permission or Half Day mode to see timing details
+                </div>
+            </div>
+
+            <!-- Validation Information -->
+            <div id="validation-info" class="validation-info">
+                <h4>⏰ Time Validation</h4>
+                <div class="validation-details" id="validation-details"></div>
+            </div>
+
+            <!-- Status Check Info -->
+            <div id="status-check-info" class="status-check-info">
+                <h4><span class="processing-indicator"></span>Processing...</h4>
+                <div id="status-check-details"></div>
+            </div>
+
+            <!-- Matched Employee Info (for public users) -->
+            <div id="matched-employee-info" class="matched-employee-info">
+                <h4>✅ Face Matched!</h4>
+                <div class="details" id="matched-employee-details"></div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Face Recognition Interface -->
+        <div class="right-panel">
+            <div class="attendance-header">
+                <div class="attendance-icon">🎯</div>
+                <h2 class="card-title">Permission & Half Day Check-in</h2>
+                <p class="card-description">Select check-in type and use face recognition to mark attendance</p>
+            </div>
+
+            <!-- Camera Feed -->
+            <div class="camera-container">
+                <video id="video" autoplay muted></video>
+                <div id="camera-overlay" class="camera-overlay">
+                    Select check-in type and click "Start Camera" to begin
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button id="start-camera-btn" onclick="startCamera()" class="action-button" disabled>
+                    📹 Start Camera
+                </button>
+                <button id="stop-camera-btn" onclick="stopCamera()" class="action-button stop hidden">
+                    ⏹️ Stop Camera
+                </button>
+                <button id="capture-button" onclick="captureAndProcess()" class="action-button capture hidden" disabled>
+                    <span id="capture-button-text">📸 Capture & Process</span>
+                </button>
+            </div>
+
+            <!-- Messages -->
+            <div id="success-message" class="success-message">
+                <div class="message-title" id="success-title">✅ Success!</div>
+                <div class="message-time">Time: <span id="action-time"></span></div>
+                <div class="message-details" id="success-details"></div>
+                <div class="message-note" id="success-note"></div>
+            </div>
+
+            <div id="error-message" class="error-message">
+                <div class="message-title">❌ Error</div>
+                <div class="message-details" id="error-details"></div>
+            </div>
+
+            <div id="warning-message" class="warning-message">
+                <div class="message-title">⚠️ Warning</div>
+                <div class="message-details" id="warning-details"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    
+</script>
+</body>
+</html>

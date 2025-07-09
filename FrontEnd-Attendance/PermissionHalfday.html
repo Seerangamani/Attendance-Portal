@@ -1,0 +1,1443 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Validation Checker</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 95%;
+            height: 90vh;
+            max-height: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .left-panel {
+            flex: 1;
+            padding: 30px;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            overflow-y: auto;
+        }
+        
+        .right-panel {
+            flex: 1.5;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100%;
+            overflow-y: auto;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 12px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .back-button .arrow {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover .arrow {
+            transform: translateX(-3px);
+        }
+        
+        .employee-face-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+        
+        .employee-face-section h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        #employee-face-image {
+            border-radius: 75px;
+            border: 3px solid #e9ecef;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        #employee-info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+        
+        .search-status-container {
+            margin-top: 15px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-indicator {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 2px solid #2196f3;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+            animation: pulse 1.5s infinite;
+            max-width: 100%;
+            width: 100%;
+        }
+        
+        .search-indicator.show {
+            display: flex;
+        }
+        
+        .search-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e3f2fd;
+            border-top: 2px solid #2196f3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 6px;
+        }
+        
+        .search-text {
+            color: #1565c0;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.3;
+        }
+        
+        .search-error {
+            display: none;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border: 2px solid #f44336;
+            color: #c62828;
+            padding: 10px 14px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
+            animation: slideDown 0.4s ease-out;
+            max-width: 100%;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .search-error.show {
+            display: block;
+        }
+        
+        .error-icon {
+            font-size: 14px;
+            margin-bottom: 4px;
+            display: block;
+        }
+        
+        .error-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        
+        .error-message {
+            font-size: 11px;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+        
+        .search-success {
+            display: none;
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            border: 2px solid #4caf50;
+            color: #2e7d32;
+            padding: 10px 14px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+            animation: slideDown 0.4s ease-out;
+            max-width: 100%;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .search-success.show {
+            display: block;
+        }
+        
+        .success-icon {
+            font-size: 14px;
+            margin-bottom: 4px;
+            display: block;
+        }
+        
+        .success-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        
+        .success-message {
+            font-size: 11px;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+        
+        .current-time {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .time-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .time-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .info-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 0;
+        }
+        
+        .allocation-info {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+        
+        .allocation-info h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .allocation-details {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .allocation-type, .allocation-time, .allocation-employee, .allocation-date {
+            margin-bottom: 8px;
+        }
+        
+        .validation-header {
+            text-align: center;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+        
+        .validation-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .card-title {
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        
+        .card-description {
+            color: #666;
+            margin: 0 0 20px 0;
+            font-size: 16px;
+        }
+        
+        .camera-container {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+        
+        #video {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+        }
+        
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+        
+        .start-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+        
+        .start-button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+        }
+        
+        .start-button:nth-child(2) {
+            background: #dc3545;
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+        
+        .start-button:nth-child(2):hover {
+            background: #c82333;
+            box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
+        }
+        
+        .start-button:nth-child(3) {
+            background: #28a745;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+        
+        .start-button:nth-child(3):hover {
+            background: #218838;
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .validation-results {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        
+        .validation-result {
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .validation-result.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .validation-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .validation-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #ffc107;
+            color: #856404;
+        }
+        
+        .validation-error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .validation-info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .result-details {
+            font-size: 16px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .result-time {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .matched-employee-info {
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+            border: 2px solid #10b981;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .matched-employee-info.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .matched-employee-info h4 {
+            margin: 0 0 10px 0;
+            color: #047857;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .matched-employee-info div {
+            font-size: 14px;
+            color: #065f46;
+            line-height: 1.4;
+        }
+        
+        .no-allocation-info {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #6c757d;
+            color: #495057;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: 95vh;
+                width: 98%;
+            }
+            
+            .left-panel, .right-panel {
+                flex: none;
+                padding: 20px;
+                min-height: auto;
+            }
+            
+            .left-panel {
+                max-height: 50vh;
+                overflow-y: auto;
+            }
+            
+            .right-panel {
+                max-height: 50vh;
+                overflow-y: auto;
+            }
+            
+            .employee-face-section {
+                margin-bottom: 15px;
+                padding: 15px;
+            }
+            
+            #employee-face-image {
+                width: 120px;
+                height: 120px;
+            }
+            
+            #video {
+                height: 200px;
+            }
+            
+            .card-title {
+                font-size: 24px;
+            }
+            
+            .search-status-container {
+                min-height: 35px;
+            }
+            
+            .search-indicator,
+            .search-error,
+            .search-success {
+                padding: 8px 12px;
+            }
+            
+            .search-text,
+            .error-title,
+            .success-title {
+                font-size: 11px;
+            }
+            
+            .error-message,
+            .success-message {
+                font-size: 10px;
+            }
+            
+            .current-time {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+            
+            .time-value {
+                font-size: 20px;
+            }
+            
+            .allocation-info {
+                padding: 15px;
+            }
+            
+            .info-section {
+                gap: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .left-panel, .right-panel {
+                padding: 15px;
+            }
+            
+            .employee-face-section {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+            
+            #employee-face-image {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .card-title {
+                font-size: 20px;
+            }
+            
+            .card-description {
+                font-size: 14px;
+            }
+            
+            #video {
+                height: 180px;
+            }
+            
+            .button-group {
+                gap: 8px;
+            }
+            
+            .start-button {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">
+        <span class="arrow">←</span>
+        <span>Back</span>
+    </button>
+    <div class="container">
+        <!-- Left Panel - Employee Info -->
+        <div class="left-panel">
+            <div class="employee-face-section">
+                <h3>Employee Face Image</h3>
+                <img id="employee-face-image" alt="Employee Face" width="150" height="150" />
+                <div id="employee-info"></div>
+                
+                <!-- Search Status Container -->
+                <div class="search-status-container">
+                    <!-- Search Indicator -->
+                    <div id="search-indicator" class="search-indicator">
+                        <div class="search-spinner"></div>
+                        <div class="search-text" id="search-text">Processing face recognition...</div>
+                    </div>
+                    
+                    <!-- Error Display -->
+                    <div id="search-error" class="search-error">
+                        <span class="error-icon">⚠️</span>
+                        <div class="error-title" id="error-title">Validation Failed</div>
+                        <div class="error-message" id="error-message">Please try again</div>
+                    </div>
+                    
+                    <!-- Success Display -->
+                    <div id="search-success" class="search-success">
+                        <span class="success-icon">✅</span>
+                        <div class="success-title" id="success-title">Face Recognized</div>
+                        <div class="success-message" id="success-message">Validation completed</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Time Display -->
+            <div class="current-time">
+                <div class="time-label">Current Time</div>
+                <div class="time-value" id="current-time"></div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="info-section">
+                <!-- Matched Employee Info (for public users) -->
+                <div id="matched-employee-info" class="matched-employee-info hidden">
+                    <h4>✅ Face Matched!</h4>
+                    <div id="matched-employee-details"></div>
+                </div>
+
+                <!-- Allocation Info -->
+                <div id="allocation-info" class="allocation-info hidden">
+                    <h4>📅 Today's Allocation</h4>
+                    <div id="allocation-details" class="allocation-details"></div>
+                </div>
+
+                <!-- No Allocation Info -->
+                <div id="no-allocation-info" class="no-allocation-info hidden">
+                    <h4>📋 No Special Allocation</h4>
+                    <div>No Permission or Half Day Leave allocated for today.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Face Recognition Interface -->
+        <div class="right-panel">
+            <div class="validation-header">
+                <div class="validation-icon">🕐</div>
+                <h2 class="card-title">Time Validation Checker</h2>
+                <p class="card-description">Check if employee arrives within allocated Permission/Half Day time</p>
+            </div>
+
+            <!-- Camera Feed -->
+            <div class="camera-container">
+                <video id="video" autoplay muted></video>
+                <div id="camera-overlay" class="camera-overlay">Click "Start Camera" to begin validation</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button id="start-camera-btn" onclick="startCamera()" class="start-button">📹 Start Camera</button>
+                <button id="stop-camera-btn" onclick="stopCamera()" class="start-button hidden">⏹️ Stop Camera</button>
+                <button id="validate-button" onclick="validateTimeAllocation()" class="start-button hidden">
+                    <span id="validate-button-text">⏰ Validate Time</span>
+                </button>
+            </div>
+
+            <!-- Validation Results -->
+            <div class="validation-results">
+                <div id="validation-success" class="validation-result validation-success hidden">
+                    <div class="result-title" id="success-title">✅ Within Allocated Time!</div>
+                    <div class="result-details" id="success-details"></div>
+                    <div class="result-time" id="success-time"></div>
+                </div>
+
+                <div id="validation-warning" class="validation-result validation-warning hidden">
+                    <div class="result-title" id="warning-title">⚠️ Time Validation Warning</div>
+                    <div class="result-details" id="warning-details"></div>
+                    <div class="result-time" id="warning-time"></div>
+                </div>
+
+                <div id="validation-error" class="validation-result validation-error hidden">
+                    <div class="result-title" id="error-title">❌ Outside Allocated Time</div>
+                    <div class="result-details" id="error-details"></div>
+                    <div class="result-time" id="error-time"></div>
+                </div>
+
+                <div id="validation-info" class="validation-result validation-info hidden">
+                    <div class="result-title" id="info-title">ℹ️ Information</div>
+                    <div class="result-details" id="info-details"></div>
+                    <div class="result-time" id="info-time"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    // Time Validation JavaScript - Only checks if employee came within allocated time
+// Does NOT mark attendance, only validates timing
+
+
+const sessionCheck = validateSession();
+if (!sessionCheck.isValid) {
+  alert("Employee session not found. Please login again.");
+  window.location.href = "login.html";
+}
+
+
+let videoStream;
+let matchedEmployee = null;
+let currentEmployeeData = null;
+
+// DOM Elements
+const video = document.getElementById('video');
+const overlay = document.getElementById('camera-overlay');
+const startBtn = document.getElementById('start-camera-btn');
+const stopBtn = document.getElementById('stop-camera-btn');
+const validateBtn = document.getElementById('validate-button');
+const employeeFaceImage = document.getElementById('employee-face-image');
+const employeeInfo = document.getElementById('employee-info');
+const matchedEmployeeInfo = document.getElementById('matched-employee-info');
+const matchedEmployeeDetails = document.getElementById('matched-employee-details');
+const allocationInfo = document.getElementById('allocation-info');
+const allocationDetails = document.getElementById('allocation-details');
+const noAllocationInfo = document.getElementById('no-allocation-info');
+
+// Validation result elements
+const validationSuccess = document.getElementById('validation-success');
+const validationWarning = document.getElementById('validation-warning');  
+const validationError = document.getElementById('validation-error');
+const validationInfo = document.getElementById('validation-info');
+
+// Session data
+const employeeId = sessionStorage.getItem("employeeId");
+const employeeName = sessionStorage.getItem("employeeName");
+const department = sessionStorage.getItem("department");
+const usertype = sessionStorage.getItem("usertype");
+
+// API Base URL
+const API_BASE_URL = 'http://localhost:8080';
+
+// Initialize
+if (!employeeId || !employeeName || !department) {
+    alert("Employee session not found. Please login again.");
+    window.location.href = "login.html";
+} else {
+    if (usertype === "public") {
+        employeeFaceImage.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjI1IiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0zMCAxMjBDMzAgMTAwIDUwIDkwIDc1IDkwQzEwMCA5MCA4MjAgMTAwIDEyMCAxMjBWMTUwSDMwVjEyMFoiIGZpbGw9IiNDQ0MiLz4KPC9zdmc+";
+        employeeInfo.textContent = "Public Access - Face will be matched against all employees";
+    } else {
+        loadEmployeeData();
+    }
+}
+
+// Update current time display
+function updateTime() {
+    document.getElementById('current-time').textContent = new Date().toLocaleTimeString();
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+// Load employee data for logged-in users
+async function loadEmployeeData() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/employee/${employeeId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const employee = await response.json();
+            currentEmployeeData = employee;
+            
+            // Load face image
+            try {
+                const faceResponse = await fetch(`${API_BASE_URL}/api/employee/face-image/${employeeId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                if (faceResponse.ok) {
+                    const data = await faceResponse.json();
+                    employeeFaceImage.src = `data:image/jpeg;base64,${data.base64Image}`;
+                }
+            } catch (faceErr) {
+                console.log('Face image not available');
+                employeeFaceImage.alt = "Face image not available";
+            }
+            
+            employeeInfo.textContent = `Employee: ${employee.username || employeeName} | Department: ${employee.department || department}`;
+            await checkTodayAllocation(employee.id);
+        } else {
+            console.log('Using session data as fallback');
+            currentEmployeeData = {
+                id: employeeId,
+                username: employeeName,
+                department: department,
+                gender: 'MALE'
+            };
+            
+            employeeInfo.textContent = `Employee: ${employeeName} | Department: ${department}`;
+            await checkTodayAllocation(employeeId);
+        }
+        
+    } catch (err) {
+        console.error('Error loading employee data:', err);
+        currentEmployeeData = {
+            id: employeeId,
+            username: employeeName,
+            department: department,
+            gender: 'MALE'
+        };
+        
+        employeeFaceImage.alt = "Image not found";
+        employeeInfo.textContent = `Employee: ${employeeName} | Department: ${department}`;
+        await checkTodayAllocation(employeeId);
+    }
+}
+function showSearchIndicator(message = "Processing face recognition...") {
+    const searchIndicator = document.getElementById('search-indicator');
+    const searchError = document.getElementById('search-error');
+    const searchSuccess = document.getElementById('search-success');
+    const searchText = document.getElementById('search-text');
+    
+    // Hide other status indicators
+    searchError.classList.remove('show');
+    searchSuccess.classList.remove('show');
+    
+    // Update message and show search indicator
+    searchText.textContent = message;
+    searchIndicator.classList.add('show');
+}
+
+function hideSearchIndicator() {
+    const searchIndicator = document.getElementById('search-indicator');
+    searchIndicator.classList.remove('show');
+}
+
+function showSearchError(title, message) {
+    const searchIndicator = document.getElementById('search-indicator');
+    const searchError = document.getElementById('search-error');
+    const searchSuccess = document.getElementById('search-success');
+    const errorTitle = document.getElementById('error-title');
+    const errorMessage = document.getElementById('error-message');
+    
+    // Hide other status indicators
+    searchIndicator.classList.remove('show');
+    searchSuccess.classList.remove('show');
+    
+    // Update error content and show
+    errorTitle.textContent = title;
+    errorMessage.textContent = message;
+    searchError.classList.add('show');
+}
+
+function showSearchSuccess(title, message) {
+    const searchIndicator = document.getElementById('search-indicator');
+    const searchError = document.getElementById('search-error');
+    const searchSuccess = document.getElementById('search-success');
+    const successTitle = document.getElementById('success-title');
+    const successMessage = document.getElementById('success-message');
+    
+    // Hide other status indicators
+    searchIndicator.classList.remove('show');
+    searchError.classList.remove('show');
+    
+    // Update success content and show
+    successTitle.textContent = title;
+    successMessage.textContent = message;
+    searchSuccess.classList.add('show');
+}
+
+function hideAllSearchStatus() {
+    const searchIndicator = document.getElementById('search-indicator');
+    const searchError = document.getElementById('search-error');
+    const searchSuccess = document.getElementById('search-success');
+    
+    searchIndicator.classList.remove('show');
+    searchError.classList.remove('show');
+    searchSuccess.classList.remove('show');
+}
+
+// Check if employee has Permission or Half Day Leave allocation for today
+async function checkTodayAllocation(empId) {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const response = await fetch(`${API_BASE_URL}/api/attendance/status/${empId}/${today}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            if (data.status === 'Permission' && data.permissionFrom && data.permissionTo) {
+                showAllocationInfo({
+                    type: 'Permission',
+                    from: data.permissionFrom,
+                    to: data.permissionTo,
+                    empId: empId
+                });
+            } else if (data.status === 'Half Day Leave' && data.halfdayFrom && data.halfdayTo) {
+                showAllocationInfo({
+                    type: 'Half Day Leave',
+                    from: data.halfdayFrom,
+                    to: data.halfdayTo,
+                    empId: empId
+                });
+            } else {
+                showNoAllocation();
+            }
+        } else {
+            showNoAllocation();
+        }
+    } catch (err) {
+        console.log('No allocation data available');
+        showNoAllocation();
+    }
+}
+
+// Display allocation information
+function showAllocationInfo(allocation) {
+    allocationDetails.innerHTML = `
+        <div class="allocation-type"><strong>Type:</strong> ${allocation.type}</div>
+        <div class="allocation-time"><strong>Allocated Time:</strong> ${formatTimeFromDB(allocation.from)} - ${formatTimeFromDB(allocation.to)}</div>
+        <div class="allocation-employee"><strong>Employee ID:</strong> ${allocation.empId}</div>
+        <div class="allocation-date"><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+    `;
+    allocationInfo.classList.remove('hidden');
+    noAllocationInfo.classList.add('hidden');
+}
+
+// Show no allocation message
+function showNoAllocation() {
+    allocationInfo.classList.add('hidden');
+    noAllocationInfo.classList.remove('hidden');
+}
+
+// Format time from database
+function formatTimeFromDB(timeString) {
+    if (!timeString) return 'Not set';
+    
+    let time;
+    if (timeString.includes('T')) {
+        time = new Date(timeString);
+    } else if (timeString.includes(':')) {
+        const today = new Date();
+        const [hours, minutes] = timeString.split(':');
+        time = new Date(today.getFullYear(), today.getMonth(), today.getDate(), parseInt(hours), parseInt(minutes));
+    } else {
+        return timeString;
+    }
+    
+    return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// Parse time from database to minutes
+function parseTimeFromDB(timeString) {
+    if (!timeString) return 0;
+    
+    let hours, minutes;
+    
+    if (timeString.includes('T')) {
+        const date = new Date(timeString);
+        hours = date.getHours();
+        minutes = date.getMinutes();
+    } else if (timeString.includes(':')) {
+        const parts = timeString.split(':');
+        hours = parseInt(parts[0]);
+        minutes = parseInt(parts[1]);
+    } else {
+        return 0;
+    }
+    
+    return hours * 60 + minutes;
+}
+
+// Start camera
+async function startCamera() {
+    try {
+        // Initialize videoStream properly
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                facingMode: 'user'
+            } 
+        });
+        
+        // Assign to global variable after successful initialization
+        videoStream = stream;
+        video.srcObject = stream;
+        
+        // Wait for video to be ready
+        await new Promise((resolve) => {
+            video.onloadedmetadata = () => {
+                resolve();
+            };
+        });
+        
+        overlay.classList.add('hidden');
+        startBtn.classList.add('hidden');
+        stopBtn.classList.remove('hidden');
+        validateBtn.classList.remove('hidden');
+        
+        hideAllValidationResults();
+        hideAllSearchStatus();
+        
+    } catch (err) {
+        console.error('Camera access error:', err);
+        
+        // Provide more specific error messages
+        let errorMessage = 'Camera access denied or not available.';
+        
+        if (err.name === 'NotAllowedError') {
+            errorMessage = 'Camera permission denied. Please allow camera access and try again.';
+        } else if (err.name === 'NotFoundError') {
+            errorMessage = 'No camera found on this device.';
+        } else if (err.name === 'NotSupportedError') {
+            errorMessage = 'Camera not supported on this browser.';
+        } else if (err.name === 'NotReadableError') {
+            errorMessage = 'Camera is being used by another application.';
+        }
+        
+        alert(errorMessage);
+        
+        // Reset UI state on error
+        overlay.classList.remove('hidden');
+        startBtn.classList.remove('hidden');
+        stopBtn.classList.add('hidden');
+        validateBtn.classList.add('hidden');
+    }
+}
+// Stop camera
+function stopCamera() {
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+    }
+    overlay.classList.remove('hidden');
+    startBtn.classList.remove('hidden');
+    stopBtn.classList.add('hidden');
+    validateBtn.classList.add('hidden');
+    hideAllValidationResults();
+}
+
+// Hide all validation result messages
+function hideAllValidationResults() {
+    validationSuccess.classList.add('hidden');
+    validationWarning.classList.add('hidden');
+    validationError.classList.add('hidden');
+    validationInfo.classList.add('hidden');
+    matchedEmployeeInfo.classList.add('hidden');
+}
+
+// Capture image as base64
+function captureBase64Only() {
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const fullData = canvas.toDataURL('image/jpeg');
+    return fullData.split(',')[1];
+}
+
+// Main validation function
+async function validateTimeAllocation() {
+    try {
+        hideAllValidationResults();
+        hideAllSearchStatus();
+        
+        const base64Image = captureBase64Only();
+        const now = new Date();
+        
+        // Show search indicator
+        showSearchIndicator("Processing face recognition...");
+
+        // Perform face recognition
+        const faceResponse = await fetch(`${API_BASE_URL}/api/face-recognition`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                employeeId: employeeId,
+                liveImage: base64Image
+            })
+        });
+
+        if (!faceResponse.ok) {
+            hideSearchIndicator();
+            showSearchError("Connection Failed", `Server error: HTTP ${faceResponse.status}`);
+            return;
+        }
+
+        const faceResult = await faceResponse.json();
+
+        if (faceResult.status !== "matched") {
+            hideSearchIndicator();
+            showSearchError("Face Not Matched", faceResult.message || "Face recognition failed");
+            return;
+        }
+
+        // Update search indicator for successful face recognition
+        showSearchIndicator("Face recognized! Validating timing...");
+
+        let targetEmployeeId = employeeId;
+        let targetEmployee = currentEmployeeData;
+        
+        // Handle public user face matching
+        if (usertype === "public" && faceResult.employee) {
+            targetEmployeeId = faceResult.employee.id;
+            matchedEmployee = faceResult.employee;
+            
+            // Load matched employee data
+            try {
+                const empResponse = await fetch(`${API_BASE_URL}/api/employee/${targetEmployeeId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (empResponse.ok) {
+                    targetEmployee = await empResponse.json();
+                }
+            } catch (empErr) {
+                console.log('Could not load employee details');
+            }
+
+            // Update UI for matched employee
+            if (faceResult.employee.faceImage) {
+                employeeFaceImage.src = `data:image/jpeg;base64,${faceResult.employee.faceImage}`;
+            }
+
+            matchedEmployeeDetails.innerHTML = `
+                <strong>Name:</strong> ${faceResult.employee.name}<br>
+                <strong>Department:</strong> ${faceResult.employee.department}<br>
+                <strong>Employee ID:</strong> ${faceResult.employee.id}<br>
+                <strong>Gender:</strong> ${targetEmployee?.gender || 'Not specified'}
+            `;
+            matchedEmployeeInfo.classList.remove('hidden');
+            employeeInfo.textContent = `Matched: ${faceResult.employee.name} | Department: ${faceResult.employee.department}`;
+            
+            // Check allocation for matched employee
+            await checkTodayAllocation(targetEmployeeId);
+        }
+
+        // Show success for face recognition
+        showSearchSuccess("Face Recognized", "Validation completed successfully");
+        
+        // Small delay to show success message
+        setTimeout(() => {
+            hideAllSearchStatus();
+        }, 2000);
+
+        // Now validate timing
+        await performTimeValidation(targetEmployeeId, now);
+
+    } catch (error) {
+        hideSearchIndicator();
+        showSearchError("Validation Error", error.message);
+        
+        // Also show in main validation results as fallback
+        hideAllValidationResults();
+        document.getElementById('error-title').textContent = '❌ Validation Error';
+        document.getElementById('error-details').textContent = "Error: " + error.message;
+        document.getElementById('error-time').textContent = `Time: ${new Date().toLocaleTimeString()}`;
+        validationError.classList.remove('hidden');
+        console.error('Validation error:', error);
+    }
+}
+
+// Perform actual time validation
+async function performTimeValidation(empId, currentTime) {
+    try {
+        // Get current allocation
+        const today = new Date().toISOString().split('T')[0];
+        const response = await fetch(`${API_BASE_URL}/api/attendance/status/${empId}/${today}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const currentHour = currentTime.getHours();
+        const currentMinute = currentTime.getMinutes();
+        const currentTimeInMinutes = currentHour * 60 + currentMinute;
+        const timeString = currentTime.toLocaleTimeString();
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            if (data.status === 'Permission' && data.permissionFrom && data.permissionTo) {
+                validatePermissionTime(data, currentTimeInMinutes, timeString, empId);
+            } else if (data.status === 'Half Day Leave' && data.halfdayFrom && data.halfdayTo) {
+                validateHalfdayTime(data, currentTimeInMinutes, timeString, empId);
+            } else {
+                // No allocation found
+                hideAllValidationResults();
+                document.getElementById('info-title').textContent = 'ℹ️ No Special Allocation';
+                document.getElementById('info-details').textContent = `Employee ${empId} has no Permission or Half Day Leave allocation for today.`;
+                document.getElementById('info-time').textContent = `Current Time: ${timeString}`;
+                validationInfo.classList.remove('hidden');
+            }
+        } else {
+            // Show error in search indicator if server response fails
+            showSearchError("Server Error", "Could not retrieve allocation data");
+            
+            // Also show in main validation results as fallback
+            hideAllValidationResults();
+            document.getElementById('info-title').textContent = 'ℹ️ No Allocation Data';
+            document.getElementById('info-details').textContent = `No allocation information found for employee ${empId} today.`;
+            document.getElementById('info-time').textContent = `Current Time: ${timeString}`;
+            validationInfo.classList.remove('hidden');
+        }
+        
+    } catch (err) {
+        // Show error in search indicator
+        showSearchError("Network Error", "Could not connect to server");
+        
+        // Also show in main validation results as fallback
+        hideAllValidationResults();
+        document.getElementById('error-title').textContent = '❌ Validation Failed';
+        document.getElementById('error-details').textContent = 'Could not retrieve allocation data from server.';
+        document.getElementById('error-time').textContent = `Time: ${currentTime.toLocaleTimeString()}`;
+        validationError.classList.remove('hidden');
+    }
+}
+
+
+// Session validation function - Add this if missing
+function validateSession() {
+    const employeeId = sessionStorage.getItem("employeeId");
+    const employeeName = sessionStorage.getItem("employeeName");
+    const department = sessionStorage.getItem("department");
+    
+    return {
+        isValid: !!(employeeId && employeeName && department),
+        employeeId: employeeId,
+        employeeName: employeeName,
+        department: department
+    };
+}
+
+// Updated session check at the top
+try {
+    const sessionCheck = validateSession();
+    if (!sessionCheck.isValid) {
+        alert("Employee session not found. Please login again.");
+        window.location.href = "login.html";
+    }
+} catch (error) {
+    console.error('Session validation error:', error);
+    alert("Session validation failed. Please login again.");
+    window.location.href = "login.html";
+}
+
+// Validate Permission timing
+function validatePermissionTime(data, currentTimeInMinutes, timeString, empId) {
+    const permissionFrom = parseTimeFromDB(data.permissionFrom);
+    const permissionTo = parseTimeFromDB(data.permissionTo);
+    
+    hideAllValidationResults();
+    
+    if (currentTimeInMinutes >= permissionFrom && currentTimeInMinutes <= permissionTo) {
+        // Within permission time - SUCCESS
+        document.getElementById('success-title').textContent = '✅ Within Permission Time!';
+        document.getElementById('success-details').textContent = 
+            `Employee ${empId} arrived within allocated Permission time (${formatTimeFromDB(data.permissionFrom)} - ${formatTimeFromDB(data.permissionTo)})`;
+        document.getElementById('success-time').textContent = `Arrival Time: ${timeString}`;
+        validationSuccess.classList.remove('hidden');
+    } else if (currentTimeInMinutes < permissionFrom) {
+        // Too early - WARNING
+        document.getElementById('warning-title').textContent = '⚠️ Early Arrival';
+        document.getElementById('warning-details').textContent = 
+            `Employee ${empId} arrived before Permission time. Permission starts at ${formatTimeFromDB(data.permissionFrom)}`;
+        document.getElementById('warning-time').textContent = `Arrival Time: ${timeString}`;
+        validationWarning.classList.remove('hidden');
+    } else {
+        // Too late - ERROR
+        document.getElementById('error-title').textContent = '❌ Late Arrival';
+        document.getElementById('error-details').textContent = 
+            `Employee ${empId} arrived after Permission time ended. Permission was until ${formatTimeFromDB(data.permissionTo)}`;
+        document.getElementById('error-time').textContent = `Arrival Time: ${timeString}`;
+        validationError.classList.remove('hidden');
+    }
+}
+
+// Validate Half Day timing
+function validateHalfdayTime(data, currentTimeInMinutes, timeString, empId) {
+    const halfdayFrom = parseTimeFromDB(data.halfdayFrom);
+    const halfdayTo = parseTimeFromDB(data.halfdayTo);
+    
+    hideAllValidationResults();
+    
+    if (currentTimeInMinutes >= halfdayFrom && currentTimeInMinutes <= halfdayTo) {
+        // Within half day time - SUCCESS
+        document.getElementById('success-title').textContent = '✅ Within Half Day Time!';
+        document.getElementById('success-details').textContent = 
+            `Employee ${empId} arrived within allocated Half Day time (${formatTimeFromDB(data.halfdayFrom)} - ${formatTimeFromDB(data.halfdayTo)})`;
+        document.getElementById('success-time').textContent = `Arrival Time: ${timeString}`;
+        validationSuccess.classList.remove('hidden');
+    } else if (currentTimeInMinutes < halfdayFrom) {
+        // Too early - WARNING
+        document.getElementById('warning-title').textContent = '⚠️ Early Arrival';
+        document.getElementById('warning-details').textContent = 
+            `Employee ${empId} arrived before Half Day time. Half Day starts at ${formatTimeFromDB(data.halfdayFrom)}`;
+        document.getElementById('warning-time').textContent = `Arrival Time: ${timeString}`;
+        validationWarning.classList.remove('hidden');
+    } else {
+        // Too late - ERROR
+        document.getElementById('error-title').textContent = '❌ Late Arrival';
+        document.getElementById('error-details').textContent = 
+            `Employee ${empId} arrived after Half Day time ended. Half Day was until ${formatTimeFromDB(data.halfdayTo)}`;
+        document.getElementById('error-time').textContent = `Arrival Time: ${timeString}`;
+        validationError.classList.remove('hidden');
+    }
+}
+
+// Navigation function
+function goBack() {
+    try {
+        // Stop camera if running
+        if (videoStream) {
+            videoStream.getTracks().forEach(track => {
+                try {
+                    track.stop();
+                } catch (err) {
+                    console.log('Error stopping track:', err);
+                }
+            });
+            videoStream = null;
+        }
+        
+        // Clear video element
+        if (video && video.srcObject) {
+            video.srcObject = null;
+        }
+        
+        // Navigate back
+        console.log('Navigating to EmployeeAttendance.html');
+        window.location.href = "EmployeeAttendance.html";
+        
+    } catch (error) {
+        console.error('Error in goBack function:', error);
+        // Force navigation even if there's an error
+        window.location.href = "EmployeeAttendance.html";
+    }
+}
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', function() {
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+    }
+});
+</script>
+</body>
+</html>

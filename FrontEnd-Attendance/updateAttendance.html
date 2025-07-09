@@ -1,0 +1,1652 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Libertinus+Math&display=swap" rel="stylesheet">
+  <title>Update Employee Status</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #3d6db8 50%, #4a7bc8 75%, #5a8fd8 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      position: relative;
+    }
+    h3{
+     font-family: "Libertinus Math", system-ui;
+       font-weight: 400;
+       font-style: normal;
+       font-size: 40px;
+       letter-spacing: 3px;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #3d6db8 50%, #4a7bc8 75%, #5a8fd8 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+      z-index: 10;
+    }
+
+    .back-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+    }
+
+    .back-button:active {
+      transform: translateY(0);
+    }
+
+    .back-button::before {
+      content: '←';
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      width: 100%;
+      max-width: 480px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    h3 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #1e3c72, #5a8fd8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #555;
+      font-weight: 500;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid #e1e5e9;
+      border-radius: 10px;
+      font-size: 14px;
+      background: white;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="time"]:focus,
+    select:focus {
+      border-color: #3d6db8;
+      box-shadow: 0 0 0 3px rgba(61, 109, 184, 0.1);
+      transform: translateY(-2px);
+    }
+
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 12px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 40px;
+      appearance: none;
+    }
+
+    #permissionFields {
+      background: linear-gradient(135deg, #f1f5ff, #e6f2ff);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 15px;
+      border: 2px solid #d1e7ff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #permissionFields::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #1e3c72, #5a8fd8);
+    }
+
+    #permissionFields .form-group {
+      margin-bottom: 12px;
+    }
+
+    #permissionFields .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    #halfDayFields {
+      background: linear-gradient(135deg, #f1f5ff, #e6f2ff);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 15px;
+      border: 2px solid #d1e7ff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #halfDayFields::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #1e3c72, #5a8fd8);
+    }
+
+    #halfDayFields .form-group {
+      margin-bottom: 12px;
+    }
+
+    #halfDayFields .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #3d6db8 50%, #4a7bc8 75%, #5a8fd8 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button[type="submit"]::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    button[type="submit"]:hover::before {
+      left: 100%;
+    }
+
+    button[type="submit"]:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(30, 60, 114, 0.3);
+    }
+
+    button[type="submit"]:active {
+      transform: translateY(-1px);
+    }
+
+    .permission-header {
+      color: #1e3c72;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      text-align: center;
+      position: relative;
+    }
+
+    .permission-header::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, #1e3c72, #5a8fd8);
+      border-radius: 1px;
+    }
+
+    .time-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    #holidayInfo {
+      display: none;
+      margin: 10px 0;
+      padding: 10px;
+      background: linear-gradient(135deg, #e7f3ff, #f0f8ff);
+      border: 1px solid #b3d9ff;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    #holidayInfo .holiday-title {
+      font-weight: bold;
+      color: #1e3c72;
+    }
+
+    #holidayInfo .holiday-note {
+      color: #666;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+
+    #permissionStatusDiv {
+      display: none;
+      margin-bottom: 12px;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 13px;
+    }
+
+    .permission-note {
+      font-size: 11px;
+      color: #666;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px 15px;
+        margin: 10px;
+        max-height: 95vh;
+      }
+      
+      h3 {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+      
+      .time-inputs {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .back-button {
+        top: 10px;
+        left: 10px;
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .form-group {
+        margin-bottom: 12px;
+      }
+
+      input[type="text"],
+      input[type="date"],
+      input[type="time"],
+      select {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      #permissionFields, #halfDayFields {
+        padding: 15px;
+        margin-top: 10px;
+      }
+    }
+
+    /* Animation for permission fields */
+    #permissionFields, #halfDayFields {
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Input icons */
+    .form-group.has-icon {
+      position: relative;
+    }
+
+    .form-group.has-icon::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 28px;
+      width: 18px;
+      height: 18px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      z-index: 1;
+      opacity: 0.5;
+    }
+
+    .employee-id::before {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%231e3c72' viewBox='0 0 24 24'%3e%3cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3e%3c/svg%3e");
+    }
+
+    .date-field::before {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%231e3c72' viewBox='0 0 24 24'%3e%3cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z'/%3e%3c/svg%3e");
+    }
+
+    /* Logo styling */
+    .logo-container {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .logo-container img {
+      max-height: 60px;
+      width: auto;
+    }
+  </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <a href="AdmDashboard.html" class="back-button">Back</a>
+
+    <div class="container">
+        <!-- Logo at top center -->
+        <div class="logo-container">
+            <img src="images/mmw_logo.png" alt="Company Logo">
+        </div>
+
+        <h3>Update Employee Status</h3>
+
+        <form id="statusForm">
+            <div class="form-group">
+                <label for="employeeId">Employee ID</label>
+                <input type="text" id="employeeId" name="employeeId" required>
+            </div>
+
+            <div class="form-group">
+                <label for="employeeName">Name</label>
+                <input type="text" id="employeeName" name="employeeName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="Absent">Absent</option>
+                    <option value="Half Day Leave">Half Day Leave</option>
+                    <option value="On Duty">On Duty</option>
+                    <option value="Permission">Permission</option>
+                    <option value="Holiday">Holiday (All Employees)</option>
+                </select>
+            </div>
+
+            <!-- Add holiday information display -->
+            <div id="holidayInfo">
+                <div class="holiday-title">
+                    🎉 Holiday Mode Selected
+                </div>
+                <div class="holiday-note">
+                    This will mark holiday for ALL employees on the selected date. Employee ID and Name fields are not required.
+                </div>
+            </div>
+
+            <!-- Half Day Type Selection with Time Fields -->
+            <div id="halfDayFields" style="display: none;">
+                <div class="permission-header">Half Day Details</div>
+                <div class="form-group">
+                    <label for="halfDayType">Half Day Type</label>
+                    <select id="halfDayType" name="halfDayType">
+                        <option value="">Select Half Day Type</option>
+                        <option value="First Half">First Half (Morning)</option>
+                        <option value="Second Half">Second Half (Afternoon)</option>
+                        <option value="Custom">Custom Time Range</option>
+                    </select>
+                </div>
+                
+                <!-- Dynamic time fields for half day -->
+                <div id="halfDayTimeFields" style="display: none;">
+                    <div class="time-inputs">
+                        <div class="form-group">
+                            <label for="halfDayFrom">From Time</label>
+                            <input type="time" id="halfDayFrom" name="halfDayFrom">
+                        </div>
+                        <div class="form-group">
+                            <label for="halfDayTo">To Time</label>
+                            <input type="time" id="halfDayTo" name="halfDayTo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional fields for Permission -->
+            <div id="permissionFields" style="display: none;">
+                <div class="permission-header">Permission Details</div>
+                
+                <!-- Permission Status Display -->
+                <div id="permissionStatusDiv">
+                    <div id="permissionStatusText"></div>
+                    <div id="permissionDetailsText"></div>
+                </div>
+                
+                <div class="time-inputs">
+                    <div class="form-group">
+                        <label for="permissionFrom">From Time</label>
+                        <input type="time" id="permissionFrom" name="permissionFrom">
+                    </div>
+                    <div class="form-group">
+                        <label for="permissionTo">To Time</label>
+                        <input type="time" id="permissionTo" name="permissionTo">
+                    </div>
+                </div>
+                <div class="permission-note">
+                    <strong>Note:</strong> Permission must be for at least 1 hour (60 minutes). Maximum 2 hours per month allowed.
+                </div>
+            </div>
+
+            <!-- Reason field -->
+            <div class="form-group reason-field">
+                <label for="reason">Reason</label>
+                <input type="text" id="reason" name="reason" placeholder="Enter reason" required>
+            </div>
+
+            <button type="submit">Update Status</button>
+        </form>
+    </div>
+<script>
+    // Global variables to store permission status
+let currentPermissionStatus = null;
+
+// Function to calculate time difference in minutes
+function calculateMinutesDifference(fromTime, toTime) {
+    if (!fromTime || !toTime) return 0;
+    
+    const from = new Date(`2000-01-01T${fromTime}:00`);
+    const to = new Date(`2000-01-01T${toTime}:00`);
+    
+    // Handle next day scenario
+    if (to < from) {
+        to.setDate(to.getDate() + 1);
+    }
+    
+    return Math.floor((to - from) / (1000 * 60));
+}
+
+// Updated validatePermissionDuration function to handle male 2-hour restriction
+function validatePermissionDuration() {
+    const fromTime = document.getElementById("permissionFrom").value;
+    const toTime = document.getElementById("permissionTo").value;
+    
+    if (!fromTime || !toTime) return true; // Let other validation handle empty fields
+    
+    const minutesDiff = calculateMinutesDifference(fromTime, toTime);
+    
+    if (minutesDiff < 60) {
+        alert(`Permission duration must be at least 1 hour (60 minutes).\nCurrent duration: ${minutesDiff} minutes.\nPlease adjust the time range.`);
+        return false;
+    }
+    
+    // Check gender-specific validation
+    if (window.currentEmployee && window.currentEmployee.gender) {
+        const gender = window.currentEmployee.gender.toLowerCase();
+        
+        if (gender === "male") {
+            // Male employees: Allow only 1 hour (60 minutes) or 2 hours (120 minutes)
+            if (minutesDiff !== 60 && minutesDiff !== 120) {
+                alert(`Male employees can take permission for either 1 hour (60 minutes) or 2 hours (120 minutes) only.\nCurrent duration: ${minutesDiff} minutes.\nPlease adjust the time range.`);
+                return false;
+            }
+        } else if (gender === "female") {
+            // Female employees: Allow 1 hour (60 minutes) or 2 hours (120 minutes)
+            if (minutesDiff !== 60 && minutesDiff !== 120) {
+                alert(`Female employees can take permission for either 1 hour (60 minutes) or 2 hours (120 minutes) only.\nCurrent duration: ${minutesDiff} minutes.\nPlease adjust the time range.`);
+                return false;
+            }
+        }
+    }
+    
+    // Check if requested duration exceeds available permission time
+    if (currentPermissionStatus && currentPermissionStatus.remainingMinutes < minutesDiff) {
+        alert(`Requested duration (${minutesDiff} minutes) exceeds available permission time (${currentPermissionStatus.remainingMinutes} minutes).\nPlease adjust the time range.`);
+        return false;
+    }
+    
+    return true;
+}
+
+// Function to provide real-time feedback on permission duration
+// Updated updatePermissionDurationFeedback function to show checkout time info
+function updatePermissionDurationFeedback() {
+    const fromTime = document.getElementById("permissionFrom").value;
+    const toTime = document.getElementById("permissionTo").value;
+    const noteElement = document.querySelector(".permission-note");
+    
+    if (fromTime && toTime) {
+        const minutesDiff = calculateMinutesDifference(fromTime, toTime);
+        const hours = Math.floor(minutesDiff / 60);
+        const minutes = minutesDiff % 60;
+        
+        let message = "";
+        let color = "#666";
+        
+        if (minutesDiff < 60) {
+            message = `<strong>⚠️ Warning:</strong> Permission must be for at least 1 hour. Current duration: ${minutesDiff} minutes (${hours}h ${minutes}m)`;
+            color = "#dc3545"; // Red color for warning
+        } else if (currentPermissionStatus && minutesDiff > currentPermissionStatus.remainingMinutes) {
+            message = `<strong>❌ Error:</strong> Requested ${minutesDiff} minutes exceeds available ${currentPermissionStatus.remainingMinutes} minutes`;
+            color = "#dc3545"; // Red color for error
+        } else {
+            message = `<strong>✅ Valid:</strong> Permission duration: ${minutesDiff} minutes (${hours}h ${minutes}m)`;
+            
+            // Add checkout time information if applicable
+            if (window.currentEmployee && window.currentEmployee.gender) {
+                const gender = window.currentEmployee.gender.toLowerCase();
+                let checkoutInfo = "";
+                
+                if (gender === "male" && minutesDiff === 120) {
+                    checkoutInfo = ` | 🕐 Checkout will be marked at ${fromTime}`;
+                } else if (gender === "female" && (minutesDiff === 60 || minutesDiff === 120)) {
+                    checkoutInfo = ` | 🕐 Checkout will be marked at ${fromTime}`;
+                }
+                
+                message += checkoutInfo;
+            }
+            
+            color = "#28a745"; // Green color for valid
+        }
+        
+        noteElement.innerHTML = message;
+        noteElement.style.color = color;
+    } else {
+        noteElement.innerHTML = `<strong>Note:</strong> Permission must be for at least 1 hour (60 minutes). Maximum 2 hours per month allowed.`;
+        noteElement.style.color = "#666"; // Default color
+    }
+}
+// Function to fetch and display permission status with cache busting
+function fetchPermissionStatus(employeeId, date, forceRefresh = false) {
+    if (!employeeId || !date) {
+        hidePermissionStatus();
+        return;
+    }
+    
+    // Extract year-month from date
+    const dateObj = new Date(date);
+    const yearMonth = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+    
+    // Add timestamp to prevent caching issues
+    const timestamp = forceRefresh ? `?_t=${Date.now()}` : '';
+    
+    fetch(`http://localhost:8080/api/attendance/permission-status/${employeeId}/${yearMonth}${timestamp}`)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Failed to fetch permission status');
+        })
+        .then(data => {
+            // Ensure we have the latest data
+            currentPermissionStatus = {
+                ...data,
+                // Recalculate remaining minutes to ensure accuracy
+                remainingMinutes: Math.max(0, 120 - (data.usedMinutes || 0)),
+                remainingPermissions: Math.max(0, 2 - (data.permissionCount || 0))
+            };
+            
+            console.log('Updated permission status:', currentPermissionStatus);
+            displayPermissionStatus(currentPermissionStatus);
+            
+            // Update duration feedback if permission times are already set
+            updatePermissionDurationFeedback();
+        })
+        .catch(error => {
+            console.error('Error fetching permission status:', error);
+            hidePermissionStatus();
+            currentPermissionStatus = null;
+        });
+}
+
+// Function to display permission status
+function displayPermissionStatus(status) {
+    const statusDiv = document.getElementById("permissionStatusDiv");
+    const statusText = document.getElementById("permissionStatusText");
+    const detailsText = document.getElementById("permissionDetailsText");
+    
+    statusDiv.style.display = "block";
+    
+    // Calculate actual remaining values
+    const actualRemainingMinutes = Math.max(0, 120 - status.usedMinutes);
+    const actualRemainingPermissions = Math.max(0, 2 - status.permissionCount);
+    
+    if (actualRemainingMinutes <= 0) {
+        // No permission time left
+        statusDiv.style.backgroundColor = "#f8d7da";
+        statusDiv.style.border = "2px solid #dc3545";
+        statusText.innerHTML = "⚠️ Permission Limit Exceeded";
+        statusText.style.color = "#721c24";
+        detailsText.innerHTML = `Monthly permission limit (120 minutes) has been exhausted. Used: ${status.usedMinutes} minutes, Remaining: 0 minutes, Permissions used: ${status.permissionCount}/2`;
+        detailsText.style.color = "#721c24";
+        
+        // Disable permission time inputs
+        document.getElementById("permissionFrom").disabled = true;
+        document.getElementById("permissionTo").disabled = true;
+    } else if (actualRemainingPermissions <= 0) {
+        // Maximum permission count reached
+        statusDiv.style.backgroundColor = "#f8d7da";
+        statusDiv.style.border = "2px solid #dc3545";
+        statusText.innerHTML = "⚠️ Maximum Permissions Used";
+        statusText.style.color = "#721c24";
+        detailsText.innerHTML = `Maximum 2 permissions per month already used. Used: ${status.usedMinutes} minutes, Remaining: ${actualRemainingMinutes} minutes, Permissions used: ${status.permissionCount}/2`;
+        detailsText.style.color = "#721c24";
+        
+        // Disable permission time inputs
+        document.getElementById("permissionFrom").disabled = true;
+        document.getElementById("permissionTo").disabled = true;
+    } else {
+        // Permission available
+        statusDiv.style.backgroundColor = "#d4edda";
+        statusDiv.style.border = "2px solid #28a745";
+        statusText.innerHTML = "✅ Permission Available";
+        statusText.style.color = "#155724";
+        detailsText.innerHTML = `Used: ${status.usedMinutes} minutes, Remaining: ${actualRemainingMinutes} minutes, Permissions used: ${status.permissionCount}/2`;
+        detailsText.style.color = "#155724";
+        
+        // Enable permission time inputs
+        document.getElementById("permissionFrom").disabled = false;
+        document.getElementById("permissionTo").disabled = false;
+    }
+    
+    // Update the current status with actual values
+    currentPermissionStatus.remainingMinutes = actualRemainingMinutes;
+    currentPermissionStatus.remainingPermissions = actualRemainingPermissions;
+}
+
+// Function to hide permission status
+
+// Updated toggleFields function to handle Holiday status
+function toggleFields() {
+    const status = document.getElementById("status").value;
+    const permissionDiv = document.getElementById("permissionFields");
+    const halfDayDiv = document.getElementById("halfDayFields");
+    const reasonInput = document.getElementById("reason");
+    const employeeIdField = document.getElementById("employeeId");
+    const employeeNameField = document.getElementById("employeeName");
+    const holidayInfo = document.getElementById("holidayInfo");
+    
+    // Hide all conditional fields first
+    permissionDiv.style.display = "none";
+    halfDayDiv.style.display = "none";
+    document.getElementById("halfDayTimeFields").style.display = "none";
+    hidePermissionStatus();
+    
+    if (status === "Holiday") {
+        // Show holiday information banner
+        holidayInfo.style.display = "block";
+        
+        // Make employee fields completely optional and hide them visually
+        employeeIdField.required = false;
+        employeeNameField.required = false;
+        
+        // Clear employee fields
+        employeeIdField.value = "";
+        employeeNameField.value = "";
+        
+        // Style fields to indicate they're not needed
+        employeeIdField.style.backgroundColor = "#f8f9fa";
+        employeeNameField.style.backgroundColor = "#f8f9fa";
+        employeeIdField.style.borderColor = "#dee2e6";
+        employeeNameField.style.borderColor = "#dee2e6";
+        employeeIdField.style.color = "#6c757d";
+        employeeNameField.style.color = "#6c757d";
+        
+        // Disable fields to prevent input
+        employeeIdField.disabled = true;
+        employeeNameField.disabled = true;
+        
+        // Update placeholders
+        employeeIdField.placeholder = "Not required for Holiday";
+        employeeNameField.placeholder = "Not required for Holiday";
+        reasonInput.placeholder = "Enter holiday reason (e.g., National Holiday, Festival, Special Occasion)";
+        
+        // Update labels to indicate not required
+        const idLabel = document.querySelector('label[for="employeeId"]');
+        const nameLabel = document.querySelector('label[for="employeeName"]');
+        if (idLabel) idLabel.innerHTML = 'Employee ID <span style="color: #6c757d; font-size: 0.8em;">(Not Required)</span>';
+        if (nameLabel) nameLabel.innerHTML = 'Name <span style="color: #6c757d; font-size: 0.8em;">(Not Required)</span>';
+        
+        // Hide current status info for holidays
+        const statusInfoDiv = document.getElementById("currentStatusInfo");
+        if (statusInfoDiv) statusInfoDiv.style.display = "none";
+        
+        // Focus on reason field since it's the main input needed
+        setTimeout(() => reasonInput.focus(), 100);
+        
+    } else {
+        // Hide holiday information banner
+        holidayInfo.style.display = "none";
+        
+        // Enable and reset employee fields
+        employeeIdField.disabled = false;
+        employeeNameField.disabled = false;
+        employeeIdField.required = true;
+        employeeNameField.required = true;
+        
+        // Reset field styling
+        employeeIdField.style.backgroundColor = "";
+        employeeNameField.style.backgroundColor = "";
+        employeeIdField.style.borderColor = "";
+        employeeNameField.style.borderColor = "";
+        employeeIdField.style.color = "";
+        employeeNameField.style.color = "";
+        
+        // Reset placeholders
+        employeeIdField.placeholder = "Enter employee ID";
+        employeeNameField.placeholder = "Enter employee name";
+        
+        // Reset labels
+        const idLabel = document.querySelector('label[for="employeeId"]');
+        const nameLabel = document.querySelector('label[for="employeeName"]');
+        if (idLabel) idLabel.innerHTML = 'Employee ID';
+        if (nameLabel) nameLabel.innerHTML = 'Name';
+        
+        // Clear stored employee data
+        window.currentEmployee = null;
+        
+        // Handle specific status types
+        if (status === "Permission") {
+            permissionDiv.style.display = "block";
+            reasonInput.placeholder = "Enter reason for permission";
+            
+            // Fetch permission status when permission is selected
+            const employeeId = employeeIdField.value.trim();
+            const date = document.getElementById("date").value;
+            if (employeeId && date) {
+                fetchPermissionStatus(employeeId, date, true);
+            }
+        } else if (status === "Half Day Leave") {
+            halfDayDiv.style.display = "block";
+            reasonInput.placeholder = "Enter reason for half day leave";
+            document.getElementById("halfDayType").value = "";
+        } else {
+            // Update placeholder based on status
+            switch(status) {
+                case "Absent":
+                    reasonInput.placeholder = "Enter reason for absence";
+                    break;
+                case "On Duty":
+                    reasonInput.placeholder = "Enter work details/location";
+                    break;
+                default:
+                    reasonInput.placeholder = "Enter reason";
+                    break;
+            }
+        }
+        
+        // Focus on employee ID field for other statuses
+        setTimeout(() => employeeIdField.focus(), 100);
+    }
+}
+function resetForm() {
+    // Reset all form fields
+    document.getElementById("statusForm").reset();
+    
+    // Set today's date as default
+    document.getElementById("date").value = new Date().toISOString().split('T')[0];
+    
+    // Reset employee name field styling and enable it
+    const nameField = document.getElementById("employeeName");
+    nameField.style.backgroundColor = "";
+    nameField.style.border = "";
+    nameField.placeholder = "Will be auto-filled when Employee ID is entered";
+    nameField.disabled = false;
+    
+    // Clear stored employee data
+    window.currentEmployee = null;
+    
+    // Hide all conditional fields
+    document.getElementById("permissionFields").style.display = "none";
+    document.getElementById("halfDayFields").style.display = "none";
+    document.getElementById("halfDayTimeFields").style.display = "none";
+    document.getElementById("holidayInfo").style.display = "none";
+    
+    // Hide status info
+    const statusInfoDiv = document.getElementById("currentStatusInfo");
+    if (statusInfoDiv) statusInfoDiv.style.display = "none";
+    
+    // Hide permission status
+    hidePermissionStatus();
+    
+    // Reset to default status and trigger field toggle
+    document.getElementById("status").value = "Absent";
+    toggleFields();
+}
+
+function hidePermissionStatus() {
+    const statusDiv = document.getElementById("permissionStatusDiv");
+    if (statusDiv) {
+        statusDiv.style.display = "none";
+    }
+    currentPermissionStatus = null;
+}
+
+
+function hideHolidayMessage() {
+    const holidayMsg = document.getElementById("holidayMessage");
+    if (holidayMsg) {
+        holidayMsg.style.display = "none";
+    }
+}
+
+
+// Show holiday-specific message
+function showHolidayMessage() {
+    let holidayMsg = document.getElementById("holidayMessage");
+    if (!holidayMsg) {
+        holidayMsg = document.createElement("div");
+        holidayMsg.id = "holidayMessage";
+        holidayMsg.className = "alert alert-info mt-3";
+        holidayMsg.innerHTML = `
+            <strong><i class="fas fa-calendar-day"></i> Holiday Mode:</strong> 
+            This will mark holiday for <strong>ALL employees</strong> on the selected date. 
+            Only date and reason are required.
+        `;
+        
+        // Insert after status select field
+        const statusField = document.getElementById("status");
+        statusField.parentNode.insertBefore(holidayMsg, statusField.nextSibling);
+    }
+    holidayMsg.style.display = "block";
+}
+// Function to handle half day type selection
+function handleHalfDayTypeChange() {
+    const halfDayType = document.getElementById("halfDayType").value;
+    const timeFields = document.getElementById("halfDayTimeFields");
+    const fromTime = document.getElementById("halfDayFrom");
+    const toTime = document.getElementById("halfDayTo");
+    
+    if (halfDayType === "First Half") {
+        // Set predefined times for first half (same for all employees)
+        fromTime.value = "09:30";
+        toTime.value = "14:30";
+        timeFields.style.display = "block";
+        fromTime.disabled = true;
+        toTime.disabled = true;
+    } else if (halfDayType === "Second Half") {
+        // Set predefined times for second half based on employee gender and specific ID
+        fromTime.value = "13:30";
+        
+        // Check if we have employee data and set end time accordingly
+        if (window.currentEmployee) {
+            const employeeId = window.currentEmployee.employeeId || document.getElementById("employeeId").value.trim();
+            const gender = window.currentEmployee.gender;
+            
+            // Special case for employee ID mmw027
+            if (employeeId.toLowerCase() === "mmw027") {
+                toTime.value = "16:00"; // 4:00 PM
+            } else if (gender && gender.toLowerCase() === "female") {
+                toTime.value = "17:00"; // 5:00 PM for female employees
+            } else if (gender && gender.toLowerCase() === "male") {
+                toTime.value = "18:00"; // 6:00 PM for male employees
+            } else {
+                // Default fallback if gender is not available
+                toTime.value = "18:00"; // Default to 6:00 PM
+            }
+        } else {
+            // If no employee data available, use default timing
+            toTime.value = "18:00"; // Default to 6:00 PM
+        }
+        
+        timeFields.style.display = "block";
+        fromTime.disabled = true;
+        toTime.disabled = true;
+    } else if (halfDayType === "Custom") {
+        // Allow custom time selection
+        fromTime.value = "";
+        toTime.value = "";
+        timeFields.style.display = "block";
+        fromTime.disabled = false;
+        toTime.disabled = false;
+    } else {
+        timeFields.style.display = "none";
+        fromTime.value = "";
+        toTime.value = "";
+    }
+}
+
+// Function to fetch employee details by ID
+// Update the fetchEmployeeDetails function to show current status
+function fetchEmployeeDetails() {
+    const status = document.getElementById("status").value;
+    
+    // Skip employee fetching for Holiday status
+    if (status === "Holiday") {
+        return;
+    }
+    
+    const employeeId = document.getElementById("employeeId").value.trim();
+    const nameField = document.getElementById("employeeName");
+    const date = document.getElementById("date").value;
+    
+    if (!employeeId) {
+        nameField.value = "";
+        nameField.style.backgroundColor = "";
+        hidePermissionStatus();
+        // Hide current status info
+        const statusInfoDiv = document.getElementById("currentStatusInfo");
+        if (statusInfoDiv) statusInfoDiv.style.display = "none";
+        
+        // Clear stored employee data
+        window.currentEmployee = null;
+        return;
+    }
+
+    // Show loading state
+    nameField.value = "Loading...";
+    nameField.disabled = true;
+
+    fetch(`http://localhost:8080/api/attendance/employee/${employeeId}`)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Employee not found');
+        })
+        .then(employee => {
+            // Employee found - auto-fill the name field
+            nameField.value = employee.username;
+            nameField.disabled = true; // Keep it disabled since it's auto-filled
+            nameField.style.backgroundColor = "#d4edda"; // Light green background
+            nameField.style.border = "2px solid #28a745"; // Green border
+            
+            // Store employee data for later use (including gender)
+            window.currentEmployee = {
+                ...employee,
+                employeeId: employeeId // Make sure employeeId is stored
+            };
+            
+            // Display current status if date is selected
+            if (date) {
+                displayCurrentStatus(employeeId, date);
+            }
+            
+            // If permission is selected, fetch permission status with force refresh
+            const currentStatus = document.getElementById("status").value;
+            if (currentStatus === "Permission" && date) {
+                fetchPermissionStatus(employeeId, date, true);
+            }
+            
+            // If half day is selected and second half is chosen, update timing based on gender
+            if (currentStatus === "Half Day Leave") {
+                const halfDayType = document.getElementById("halfDayType").value;
+                if (halfDayType === "Second Half") {
+                    handleHalfDayTypeChange(); // Recalculate timing with new employee data
+                }
+            }
+        })
+        .catch(error => {
+            // Employee not found - show error
+            nameField.value = "";
+            nameField.disabled = false;
+            nameField.style.backgroundColor = "#f8d7da"; // Light red background
+            nameField.style.border = "2px solid #dc3545"; // Red border
+            nameField.placeholder = "Employee ID not found in database";
+            alert("Error: Employee ID '" + employeeId + "' not found in database. Please check the Employee ID.");
+            
+            // Clear stored employee data
+            window.currentEmployee = null;
+            hidePermissionStatus();
+            
+            // Hide current status info
+            const statusInfoDiv = document.getElementById("currentStatusInfo");
+            if (statusInfoDiv) statusInfoDiv.style.display = "none";
+        });
+}
+// Function to reset name field styling
+function resetNameFieldStyling() {
+    const nameField = document.getElementById("employeeName");
+    nameField.style.backgroundColor = "";
+    nameField.style.border = "";
+    nameField.placeholder = "Enter employee name";
+}
+
+// Function to validate employee before form submission
+function validateEmployee() {
+    const status = document.getElementById("status").value;
+    
+    // Skip employee validation completely for Holiday status
+    if (status === "Holiday") {
+        return true;
+    }
+    
+    const employeeId = document.getElementById("employeeId").value.trim();
+    const employeeName = document.getElementById("employeeName").value.trim();
+    
+    if (!employeeId) {
+        alert("Please enter Employee ID");
+        document.getElementById("employeeId").focus();
+        return false;
+    }
+    
+    if (!employeeName || employeeName === "") {
+        alert("Employee name not found. Please check if Employee ID is valid");
+        document.getElementById("employeeId").focus();
+        return false;
+    }
+    
+    if (employeeName === "Loading...") {
+        alert("Please wait for employee details to load");
+        return false;
+    }
+    
+    // Additional validation: Check if employee name field shows error state
+    const nameField = document.getElementById("employeeName");
+    if (nameField.style.backgroundColor === "rgb(248, 215, 218)" || 
+        nameField.placeholder === "Employee ID not found in database") {
+        alert("Employee ID not found. Please enter a valid Employee ID.");
+        document.getElementById("employeeId").focus();
+        return false;
+    }
+    
+    // Ensure we have employee data stored
+    if (!window.currentEmployee) {
+        alert("Employee data not loaded properly. Please re-enter the Employee ID.");
+        document.getElementById("employeeId").focus();
+        return false;
+    }
+    
+    return true;
+}
+
+// Function to validate permission request
+function validatePermissionRequest() {
+    // Check if permission time inputs are disabled (meaning no permission available)
+    const fromTimeInput = document.getElementById("permissionFrom");
+    const toTimeInput = document.getElementById("permissionTo");
+    
+    if (fromTimeInput.disabled || toTimeInput.disabled) {
+        alert("Permission cannot be granted. Monthly permission limit has been reached or exceeded.");
+        return false;
+    }
+    
+    // Check if current permission status shows no remaining time or permissions
+    if (currentPermissionStatus) {
+        if (currentPermissionStatus.remainingMinutes <= 0) {
+            alert("Permission cannot be granted. Monthly permission time limit (120 minutes) has been exhausted.");
+            return false;
+        }
+        
+        if (currentPermissionStatus.remainingPermissions <= 0) {
+            alert("Permission cannot be granted. Maximum 2 permissions per month have already been used.");
+            return false;
+        }
+    }
+    
+    return validatePermissionDuration();
+}
+
+
+// Function to check employee status before allowing permission/half day
+function checkEmployeeStatus(employeeId, date, newStatus) {
+    return fetch(`http://localhost:8080/api/attendance/check-status/${employeeId}/${date}`)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            return null; // No existing status found
+        })
+        .then(data => {
+            if (data && data.status) {
+                const currentStatus = data.status.toLowerCase();
+                const newStatusLower = newStatus.toLowerCase();
+                
+                // Special handling for Late status - allow admin to override with Permission or Half Day Leave
+                if (currentStatus === "late" && 
+                    (newStatus === "Permission" || newStatus === "Half Day Leave")) {
+                    
+                    const confirmOverride = confirm(
+                        `Employee is currently marked as LATE on ${date}.\n\n` +
+                        `Current Status: ${data.status}\n` +
+                        `New Status: ${newStatus}\n\n` +
+                        `This will change the employee's status from Late to ${newStatus}.\n` +
+                        `Do you want to proceed with this status change?`
+                    );
+                    
+                    if (!confirmOverride) {
+                        throw new Error(`Status update cancelled. Employee remains as LATE.`);
+                    }
+                    
+                    return { 
+                        hasExistingStatus: true, 
+                        currentStatus: data.status,
+                        allowOverride: true,
+                        isLateOverride: true // Special flag for late status override
+                    };
+                }
+                
+                // Special check: Don't allow permission/half day if currently absent
+                if (currentStatus === "absent" && 
+                    (newStatus === "Permission" || newStatus === "Half Day Leave")) {
+                    
+                    // Ask user if they want to override the absent status
+                    const confirmOverride = confirm(
+                        `Employee is currently marked as ABSENT on ${date}.\n\n` +
+                        `Current Status: ${data.status}\n` +
+                        `New Status: ${newStatus}\n\n` +
+                        `Do you want to override the absent status and update to ${newStatus}?`
+                    );
+                    
+                    if (!confirmOverride) {
+                        throw new Error(`Status update cancelled. Employee remains as ABSENT.`);
+                    }
+                }
+                
+                // For all other status changes, ask for confirmation
+                if (currentStatus !== newStatusLower) {
+                    const confirmUpdate = confirm(
+                        `Employee already has a status for ${date}.\n\n` +
+                        `Current Status: ${data.status}\n` +
+                        `New Status: ${newStatus}\n\n` +
+                        `Do you want to update the status?`
+                    );
+                    
+                    if (!confirmUpdate) {
+                        throw new Error(`Status update cancelled by admin.`);
+                    }
+                }
+                
+                // Return existing status info for backend processing
+                return { 
+                    hasExistingStatus: true, 
+                    currentStatus: data.status,
+                    allowOverride: true 
+                };
+            }
+            return { hasExistingStatus: false }; // No existing status found
+        })
+        .catch(error => {
+            throw error;
+        });
+}
+
+// Add event listeners
+document.getElementById("employeeId").addEventListener("blur", fetchEmployeeDetails);
+document.getElementById("employeeId").addEventListener("input", function() {
+    const status = document.getElementById("status").value;
+    
+    // Skip clearing for Holiday status
+    if (status === "Holiday") {
+        return;
+    }
+    
+    document.getElementById("employeeName").value = "";
+    resetNameFieldStyling();
+    window.currentEmployee = null;
+    hidePermissionStatus();
+});
+document.getElementById("employeeName").addEventListener("input", resetNameFieldStyling);
+document.getElementById("status").addEventListener("change", toggleFields);
+document.getElementById("halfDayType").addEventListener("change", handleHalfDayTypeChange);
+
+// Add event listener for date changes to refresh permission status
+document.getElementById("date").addEventListener("change", function() {
+    const status = document.getElementById("status").value;
+    const employeeId = document.getElementById("employeeId").value.trim();
+    const date = this.value;
+    
+    // Display current status for the selected date
+    if (employeeId && date) {
+        displayCurrentStatus(employeeId, date);
+    }
+    
+    if (status === "Permission" && employeeId && date) {
+        fetchPermissionStatus(employeeId, date, true); // Force refresh on date change
+    }
+});
+
+document.getElementById("employeeId").addEventListener("blur", function() {
+    const status = document.getElementById("status").value;
+    
+    // Skip fetching for Holiday status
+    if (status !== "Holiday") {
+        fetchEmployeeDetails();
+    }
+});
+
+// Add event listeners for permission time validation
+document.getElementById("permissionFrom").addEventListener("change", updatePermissionDurationFeedback);
+document.getElementById("permissionTo").addEventListener("change", updatePermissionDurationFeedback);
+document.getElementById("permissionFrom").addEventListener("blur", updatePermissionDurationFeedback);
+document.getElementById("permissionTo").addEventListener("blur", updatePermissionDurationFeedback);
+
+// Initialize the form on page load
+document.addEventListener('DOMContentLoaded', function() {
+    toggleFields();
+    // Set today's date as default
+    document.getElementById("date").value = new Date().toISOString().split('T')[0];
+});
+document.getElementById("statusForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    // Validate employee before submission (skips for Holiday)
+    if (!validateEmployee()) {
+        return;
+    }
+
+    const statusValue = document.getElementById("status").value;
+    const reasonValue = document.getElementById("reason").value.trim();
+    const date = document.getElementById("date").value;
+
+    // Validate reason field
+    if (!reasonValue) {
+        let reasonType = "reason";
+        switch(statusValue) {
+            case "Absent":
+                reasonType = "reason for absence";
+                break;
+            case "Half Day Leave":
+                reasonType = "reason for half day leave";
+                break;
+            case "On Duty":
+                reasonType = "work details/location";
+                break;
+            case "Permission":
+                reasonType = "reason for permission";
+                break;
+            case "Holiday":
+                reasonType = "holiday reason";
+                break;
+        }
+        alert(`Please enter ${reasonType}`);
+        return;
+    }
+
+    // Show loading state
+    const submitButton = document.querySelector("button[type='submit']");
+    const originalText = submitButton.textContent;
+    submitButton.textContent = "Processing...";
+    submitButton.disabled = true;
+
+    // Handle Holiday status differently
+    if (statusValue === "Holiday") {
+        handleHolidaySubmission(date, reasonValue, submitButton, originalText);
+        return;
+    }
+
+    // For all other statuses, continue with existing individual employee logic
+    const employeeId = document.getElementById("employeeId").value.trim();
+    handleIndividualEmployeeSubmission(employeeId, date, statusValue, reasonValue, submitButton, originalText);
+});
+
+function handleHolidaySubmission(date, reason, submitButton, originalText) {
+    // Enhanced confirmation dialog
+    const confirmMessage = 
+        "🎉 HOLIDAY MARKING CONFIRMATION\n\n" +
+        `Date: ${date}\n` +
+        `Reason: ${reason}\n\n` +
+        "This will mark holiday for ALL employees on this date.\n\n" +
+        "⚠️ If some employees already have different attendance status, " +
+        "do you want to override them?\n\n" +
+        "✅ Click 'OK' to override existing records\n" +
+        "❌ Click 'Cancel' to only mark employees without existing records";
+    
+    const shouldOverride = confirm(confirmMessage);
+
+    const holidayData = {
+        status: "Holiday",
+        date: date,
+        reason: reason,
+        isHoliday: true,
+        isAdminOverride: shouldOverride
+    };
+
+    console.log("Sending holiday data:", holidayData);
+
+    fetch("http://localhost:8080/api/attendance/mark-holiday", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(holidayData)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        return response.json().then(err => {
+            throw new Error(err.message || "Failed to mark holiday");
+        });
+    })
+    .then(data => {
+        let successMessage = `🎉 Holiday marked successfully for ${date}!\n\n${data.message}`;
+        
+        if (data.employeesMarked > 0) {
+            successMessage += `\n• ✅ New holiday records: ${data.employeesMarked}`;
+        }
+        
+        if (data.existingRecordsUpdated > 0) {
+            successMessage += `\n• 🔄 Existing records updated: ${data.existingRecordsUpdated}`;
+        }
+        
+        if (data.totalEmployees) {
+            successMessage += `\n• 👥 Total employees affected: ${data.totalEmployees}`;
+        }
+        
+        alert(successMessage);
+        
+        // Reset form for holiday
+        document.getElementById("reason").value = "";
+        
+        // Show success styling
+        const reasonInput = document.getElementById("reason");
+        reasonInput.style.borderColor = "#28a745";
+        reasonInput.style.backgroundColor = "#d4edda";
+        setTimeout(() => {
+            reasonInput.style.borderColor = "";
+            reasonInput.style.backgroundColor = "";
+        }, 3000);
+        
+    })
+    .catch(error => {
+        alert("❌ Error marking holiday: " + error.message);
+        console.error("Holiday marking error:", error);
+    })
+    .finally(() => {
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+    });
+}
+
+// Updated displayCurrentStatus function to show complete attendance info
+function displayCurrentStatus(employeeId, date) {
+    fetch(`http://localhost:8080/api/attendance/check-status/${employeeId}/${date}`)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            return null;
+        })
+        .then(data => {
+            const statusInfoDiv = document.getElementById("currentStatusInfo");
+            if (!statusInfoDiv) {
+                // Create status info div if it doesn't exist
+                const infoDiv = document.createElement("div");
+                infoDiv.id = "currentStatusInfo";
+                infoDiv.style.cssText = `
+                    margin: 10px 0;
+                    padding: 10px;
+                    border-radius: 5px;
+                    font-weight: bold;
+                `;
+                
+                const employeeSection = document.querySelector("#employeeName").parentNode;
+                employeeSection.appendChild(infoDiv);
+            }
+            
+            const statusDiv = document.getElementById("currentStatusInfo");
+            
+            if (data && data.status) {
+                let statusInfo = `📊 Current Status: <span style="color: #dc3545;">${data.status}</span>`;
+                
+                // Add check-in time if available
+                if (data.checkinTime) {
+                    statusInfo += `<br>🕐 Check-in: <span style="color: #28a745;">${data.checkinTime}</span>`;
+                }
+                
+                // Add check-out time if available
+                if (data.checkoutTime) {
+                    statusInfo += `<br>🕐 Check-out: <span style="color: #28a745;">${data.checkoutTime}</span>`;
+                }
+                
+                // Add reason if available
+                if (data.reason) {
+                    statusInfo += `<br>📝 Reason: ${data.reason}`;
+                }
+                
+                statusInfo += `<br><small style="color: #666;">💡 Admin can update this status (check-in time will be preserved)</small>`;
+                
+                statusDiv.innerHTML = statusInfo;
+                statusDiv.style.backgroundColor = "#fff3cd";
+                statusDiv.style.border = "1px solid #ffeaa7";
+                statusDiv.style.display = "block";
+            } else {
+                statusDiv.innerHTML = `✅ No existing status for this date`;
+                statusDiv.style.backgroundColor = "#d4edda";
+                statusDiv.style.border = "1px solid #c3e6cb";
+                statusDiv.style.display = "block";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching current status:", error);
+        });
+}
+function shouldMarkCheckoutTime(gender, status, permissionFrom, permissionTo, halfDayType, halfDayFrom) {
+    if (!gender) return false;
+    
+    const genderLower = gender.toLowerCase();
+    
+    if (status === "Permission") {
+        if (genderLower === "male") {
+            // Male: Mark checkout if permission is 2 hours (120 minutes)
+            const duration = calculateMinutesDifference(permissionFrom, permissionTo);
+            return duration === 120; // Exactly 2 hours
+        } else if (genderLower === "female") {
+            // Female: Mark checkout for any permission (1 hour or 2 hours)
+            return true;
+        }
+    } else if (status === "Half Day Leave") {
+        // Both male and female: Mark checkout if half day type is "Second Half"
+        return halfDayType === "Second Half";
+    }
+    
+    return false;
+}
+function getCheckoutTime(gender, status, permissionFrom, halfDayFrom) {
+    if (status === "Permission") {
+        return permissionFrom; // Checkout at permission start time
+    } else if (status === "Half Day Leave") {
+        return halfDayFrom; // Checkout at half day start time
+    }
+    return null;
+ }
+
+function handleIndividualEmployeeSubmission(employeeId, date, statusValue, reasonValue, submitButton, originalText) {
+    // Special validation for Permission status
+    if (statusValue === "Permission") {
+        if (!validatePermissionRequest()) {
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+            return;
+        }
+    }
+
+    // Check employee status before proceeding
+    checkEmployeeStatus(employeeId, date, statusValue)
+        .then((statusInfo) => {
+            // Get employee name from the form field
+            const employeeName = document.getElementById("employeeName").value.trim();
+            
+            // Prepare attendance data based on status type
+            const attendanceData = {
+                employeeId: employeeId,
+                employeeName: employeeName, // Add this missing field
+                date: date,
+                status: statusValue,
+                reason: reasonValue,
+                isAdminUpdate: true
+            };
+
+            // Add additional data based on status type
+            if (statusValue === "Permission") {
+                const permissionFrom = document.getElementById("permissionFrom").value;
+                const permissionTo = document.getElementById("permissionTo").value;
+                
+                attendanceData.permissionFrom = permissionFrom;
+                attendanceData.permissionTo = permissionTo;
+                
+                // Check if checkout should be marked
+                if (window.currentEmployee && window.currentEmployee.gender) {
+                    const shouldMarkCheckout = shouldMarkCheckoutTime(
+                        window.currentEmployee.gender, 
+                        statusValue, 
+                        permissionFrom, 
+                        permissionTo
+                    );
+                    
+                    if (shouldMarkCheckout) {
+                        attendanceData.checkoutTime = getCheckoutTime(
+                            window.currentEmployee.gender, 
+                            statusValue, 
+                            permissionFrom
+                        );
+                        attendanceData.markCheckout = true;
+                    }
+                }
+            } else if (statusValue === "Half Day Leave") {
+                const halfDayType = document.getElementById("halfDayType").value;
+                const halfDayFrom = document.getElementById("halfDayFrom").value;
+                const halfDayTo = document.getElementById("halfDayTo").value;
+                
+                attendanceData.halfDayType = halfDayType;
+                attendanceData.halfDayFrom = halfDayFrom;
+                attendanceData.halfDayTo = halfDayTo;
+                
+                // Check if checkout should be marked for half day
+                if (window.currentEmployee && window.currentEmployee.gender) {
+                    const shouldMarkCheckout = shouldMarkCheckoutTime(
+                        window.currentEmployee.gender, 
+                        statusValue, 
+                        null, 
+                        null,
+                        halfDayType, 
+                        halfDayFrom
+                    );
+                    
+                    if (shouldMarkCheckout) {
+                        attendanceData.checkoutTime = getCheckoutTime(
+                            window.currentEmployee.gender, 
+                            statusValue, 
+                            null, 
+                            halfDayFrom
+                        );
+                        attendanceData.markCheckout = true;
+                    }
+                }
+            }
+
+            // Include status override info if applicable
+            if (statusInfo.hasExistingStatus) {
+                attendanceData.hasExistingStatus = true;
+                attendanceData.previousStatus = statusInfo.currentStatus;
+                attendanceData.allowOverride = statusInfo.allowOverride;
+            }
+
+            return fetch("http://localhost:8080/api/attendance/update-status", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(attendanceData)
+            });
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            return response.json().then(err => {
+                throw new Error(err.message || "Failed to update status");
+            });
+        })
+        .then(data => {
+            let successMessage = `✅ Status updated successfully!\n\n`;
+            successMessage += `Employee ID: ${employeeId}\n`;
+            successMessage += `Date: ${date}\n`;
+            successMessage += `Status: ${statusValue}\n`;
+            
+            if (data.message) {
+                successMessage += `\n${data.message}`;
+            }
+            
+            if (statusValue === "Permission" && data.permissionInfo) {
+                successMessage += `\n\n📊 Permission Summary:`;
+                successMessage += `\n• Duration: ${data.permissionInfo.duration} minutes`;
+                successMessage += `\n• Remaining this month: ${data.permissionInfo.remainingMinutes} minutes`;
+                successMessage += `\n• Permissions used: ${data.permissionInfo.permissionsUsed}/2`;
+            }
+            
+            alert(successMessage);
+            
+            // Reset form
+            resetForm();
+            
+            // Refresh permission status if needed
+            if (statusValue === "Permission") {
+                fetchPermissionStatus(employeeId, date, true);
+            }
+        })
+        .catch(error => {
+            alert("❌ Error updating status: " + error.message);
+            console.error("Individual employee update error:", error);
+        })
+        .finally(() => {
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+        });
+}
+  </script>
+ </body>
+</html>

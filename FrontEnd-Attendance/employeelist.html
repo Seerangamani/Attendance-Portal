@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Libertinus+Math&display=swap" rel="stylesheet">
+
+  <title>Employee Status Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #3d6db8 50%, #4a7bc8 75%, #5a8fd8 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      animation: slideUp 0.8s ease-out;
+      position: relative;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .back-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(79, 172, 254, 0.4);
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    }
+
+    .back-button:active {
+      transform: translateY(-1px);
+    }
+
+    .back-button::before {
+      content: '←';
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      padding: 40px 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .logo {
+      width: 120px;
+      height: 80px;
+      margin: 0 auto 20px;
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+      /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); */
+      /* border: 3px solid rgba(255, 255, 255, 0.3); */
+      backdrop-filter: blur(10px);
+      object-fit: contain;
+      /* background: rgba(255, 255, 255, 0.1); */
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .title {
+      font-family: "Libertinus Math", system-ui;
+       font-weight: 400;
+       font-style: normal;
+       font-size: 40px;
+       letter-spacing: 3px;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: space-around;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.5);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 20px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .stat-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #4facfe;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .table-container {
+      padding: 30px;
+      overflow-x: auto;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #4facfe;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #employeeStatusTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    #employeeStatusTable th {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #3d6db8 50%, #4a7bc8 75%, #5a8fd8 100%);
+      color: white;
+      font-weight: 600;
+      padding: 20px 15px;
+      text-align: left;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+
+    #employeeStatusTable th::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    #employeeStatusTable td {
+      padding: 18px 15px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    #employeeStatusTable tbody tr {
+      transition: all 0.3s ease;
+      animation: fadeInRow 0.5s ease-out backwards;
+    }
+
+    #employeeStatusTable tbody tr:nth-child(even) {
+      background: rgba(79, 172, 254, 0.02);
+    }
+
+    #employeeStatusTable tbody tr:hover {
+      background: rgba(79, 172, 254, 0.08);
+      transform: scale(1.01);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes fadeInRow {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .status-present {
+      background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+    }
+
+    .status-absent {
+      background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .status-late {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .status-leave {
+      background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    .employee-id {
+      font-weight: 600;
+      color: #4facfe;
+    }
+
+    .employee-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .department {
+      color: #666;
+      font-size: 0.85rem;
+    }
+
+    .designation {
+      color: #666;
+      font-style: italic;
+    }
+
+    .error-message {
+      text-align: center;
+      padding: 60px 30px;
+      color: #e11d48;
+      font-size: 1.1rem;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 16px;
+      margin: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .title {
+        font-size: 2rem;
+      }
+      
+      .stats-bar {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .table-container {
+        padding: 15px;
+      }
+      
+      #employeeStatusTable th,
+      #employeeStatusTable td {
+        padding: 12px 8px;
+        font-size: 0.8rem;
+      }
+
+      .back-button {
+        top: 15px;
+        left: 15px;
+        padding: 10px 14px;
+        font-size: 12px;
+      }
+
+      .header {
+        padding: 50px 30px 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Back Button -->
+    <a href="AdmDashboard.html" class="back-button">
+      Back
+    </a>
+
+    <div class="header">
+      <img src="images/mmw_logo.png" alt="Company Logo" class="logo" />
+      <h1 class="title">Employee Dashboard</h1>
+      <p class="subtitle">Real-time attendance tracking</p>
+    </div>
+    
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-number" id="totalEmployees">-</div>
+        <div class="stat-label">Total Employees</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="presentCount">-</div>
+        <div class="stat-label">Present</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="absentCount">-</div>
+        <div class="stat-label">Absent</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="lateCount">-</div>
+        <div class="stat-label">Late</div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="loading" id="loadingIndicator">Loading employee data...</div>
+      <table id="employeeStatusTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function getStatusClass(status) {
+      const statusLower = status.toLowerCase();
+      if (statusLower.includes('present')) return 'status-present';
+      if (statusLower.includes('absent')) return 'status-absent';
+      if (statusLower.includes('late')) return 'status-late';
+      if (statusLower.includes('leave')) return 'status-leave';
+      return 'status-present';
+    }
+
+    function updateStats(data) {
+      const stats = data.reduce((acc, emp) => {
+        const status = emp.status.toLowerCase();
+        acc.total++;
+        if (status.includes('present')) acc.present++;
+        else if (status.includes('absent')) acc.absent++;
+        else if (status.includes('late')) acc.late++;
+        return acc;
+      }, { total: 0, present: 0, absent: 0, late: 0 });
+
+      document.getElementById('totalEmployees').textContent = stats.total;
+      document.getElementById('presentCount').textContent = stats.present;
+      document.getElementById('absentCount').textContent = stats.absent;
+      document.getElementById('lateCount').textContent = stats.late;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      const table = document.getElementById('employeeStatusTable');
+      const tbody = table.querySelector('tbody');
+
+      fetch("http://localhost:8080/api/attendance/today-status")
+        .then(res => res.json())
+        .then(data => {
+          loadingIndicator.style.display = 'none';
+          table.style.display = 'table';
+          
+          updateStats(data);
+          
+          data.forEach((emp, index) => {
+            const row = document.createElement('tr');
+            row.style.animationDelay = `${index * 0.1}s`;
+            row.innerHTML = `
+              <td class="employee-id">${emp.employeeId}</td>
+              <td class="employee-name">${emp.employeeName}</td>
+              <td class="department">${emp.department}</td>
+              <td class="designation">${emp.designation}</td>
+              <td><span class="status-badge ${getStatusClass(emp.status)}">${emp.status}</span></td>
+            `;
+            tbody.appendChild(row);
+          });
+        })
+        .catch(err => {
+          console.error("Error loading employee status:", err);
+          loadingIndicator.innerHTML = '<div class="error-message">Failed to load employee data. Please try again later.</div>';
+        });
+    });
+  </script>
+</body>
+</html>

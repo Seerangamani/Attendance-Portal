@@ -1,0 +1,1293 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Check-Out</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 95%;
+            height: 90vh;
+            max-height: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .left-panel {
+            flex: 1;
+            padding: 30px;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+        
+        .right-panel {
+            flex: 1.5;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 12px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .back-button .arrow {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover .arrow {
+            transform: translateX(-3px);
+        }
+        
+        .employee-face-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .employee-face-section h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        #employee-face-image {
+            border-radius: 75px;
+            border: 3px solid #e9ecef;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        #employee-info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        /* Error Messages Container - Positioned after employee face section */
+        .error-messages-container {
+            margin-bottom: 20px;
+        }
+        
+        /* Validation Error Styling - Made more compact and professional */
+        .validation-error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 1px solid #dc3545;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
+            display: none;
+            animation: slideInDown 0.4s ease-out;
+        }
+        
+        .validation-error.show {
+            display: block;
+        }
+        
+        .validation-error h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #721c24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .validation-error p {
+            margin: 5px 0;
+            font-size: 13px;
+            color: #721c24;
+            line-height: 1.4;
+        }
+        
+        #validation-message {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        #validation-reason {
+            font-size: 12px;
+            color: #5a1a1a;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+        
+        /* Status Info Styling - Made more compact */
+        .status-info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border: 1px solid #17a2b8;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.15);
+            display: none;
+            animation: slideInDown 0.4s ease-out;
+        }
+        
+        .status-info.show {
+            display: block;
+        }
+        
+        .status-info h4 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0c5460;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .status-info p {
+            margin: 0;
+            font-size: 13px;
+            color: #0c5460;
+            line-height: 1.3;
+        }
+        
+        /* Timing Info Styling - Made more compact */
+        .timing-info {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+            display: none;
+            animation: slideInDown 0.4s ease-out;
+        }
+        
+        .timing-info.show {
+            display: block;
+        }
+        
+        .timing-info h4 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #856404;
+            text-align: center;
+        }
+        
+        .timing-info .timing-row {
+            font-size: 12px;
+            color: #856404;
+            line-height: 1.4;
+            text-align: left;
+        }
+        
+        /* Early Leave Warning - Made more compact */
+        .early-leave-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 1px solid #ff8c00;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #856404;
+            text-align: center;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+        
+        .early-leave-warning.show {
+            display: block;
+        }
+        
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+        
+        .attendance-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .attendance-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .card-title {
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        
+        .card-description {
+            color: #666;
+            margin: 0 0 20px 0;
+            font-size: 16px;
+        }
+        
+        .current-time {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .time-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .time-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .camera-container {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        #video {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+        }
+        
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .start-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+        
+        .start-button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+        }
+        
+        .start-button:nth-child(2) {
+            background: #dc3545;
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+        
+        .start-button:nth-child(2):hover {
+            background: #c82333;
+            box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
+        }
+        
+        .start-button:nth-child(3) {
+            background: #28a745;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+        
+        .start-button:nth-child(3):hover {
+            background: #218838;
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .success-message {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .success-time {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .success-note {
+            font-size: 14px;
+            color: #0f5132;
+        }
+        
+        /* Work Hours Summary Styling */
+        .work-hours-summary {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .work-hours-summary.show {
+            display: block;
+        }
+        
+        .work-hours-summary h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+        }
+        
+        /* Employee Timing Display */
+        .employee-timing {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .employee-timing.female-timing {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            color: #880e4f;
+            border: 1px solid #e1bee7;
+        }
+        
+        .employee-timing.male-timing {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #0d47a1;
+            border: 1px solid #90caf9;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: 95vh;
+                width: 98%;
+            }
+            
+            .left-panel, .right-panel {
+                flex: 1;
+                padding: 20px;
+            }
+            
+            .employee-face-section {
+                margin-bottom: 15px;
+                padding: 15px;
+            }
+            
+            #employee-face-image {
+                width: 120px;
+                height: 120px;
+            }
+            
+            #video {
+                height: 200px;
+            }
+            
+            .card-title {
+                font-size: 24px;
+            }
+            
+            .validation-error,
+            .status-info,
+            .timing-info {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .validation-error h4,
+            .status-info h4,
+            .timing-info h4 {
+                font-size: 13px;
+            }
+            
+            .validation-error p,
+            .status-info p {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">
+        <span class="arrow">←</span>
+        <span>Back</span>
+    </button>
+    
+    <div class="container">
+        <!-- Left Panel - Employee Info -->
+        <div class="left-panel">
+            <div class="employee-face-section">
+                <h3>Employee Face Image</h3>
+                <img id="employee-face-image" alt="Employee Face" width="150" height="150" />
+                <div id="employee-info"></div>
+                <!-- Gender-based timing display -->
+                <div id="employee-timing" class="employee-timing"></div>
+            </div>
+
+            <!-- Error Messages Container - Positioned after employee face section -->
+            <div class="error-messages-container">
+                <!-- Validation Error Display -->
+                <div id="validation-error" class="validation-error">
+                    <h4>❌ Checkout Not Available</h4>
+                    <p id="validation-message"></p>
+                    <p id="validation-reason"></p>
+                </div>
+
+                <!-- Status Information Display -->
+                <div id="status-info" class="status-info">
+                    <h4>ℹ️ Current Status</h4>
+                    <p id="status-details"></p>
+                </div>
+
+                <!-- Gender-based Timing Info -->
+                <div id="timing-info" class="timing-info">
+                    <h4>⏰ Work Timing Information</h4>
+                    <div id="timing-details"></div>
+                    <div id="early-leave-warning" class="early-leave-warning">
+                        <strong>⚠️ Early Leave Warning:</strong>
+                        <span id="early-leave-message"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Time Display -->
+            <div class="current-time">
+                <div class="time-label">Current Time</div>
+                <div class="time-value" id="current-time"></div>
+            </div>
+
+            <!-- Work Hours Summary -->
+            <div id="work-hours-summary" class="work-hours-summary">
+                <h4>📊 Work Hours Summary</h4>
+                <div id="expected-hours"></div>
+                <div id="actual-hours"></div>
+                <div id="overtime-status"></div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Check-out Interface -->
+        <div class="right-panel">
+            <div class="attendance-header">
+                <div class="attendance-icon">👤</div>
+                <h2 class="card-title">Face Recognition Check-Out</h2>
+                <p class="card-description">Look at the camera to automatically check out with gender-based timing validation</p>
+            </div>
+
+            <!-- Camera Feed -->
+            <div class="camera-container">
+                <video id="video" autoplay muted></video>
+                <div id="camera-overlay" class="camera-overlay">Click "Begin Face Recognition" to start</div>
+            </div>
+
+            <!-- Action Buttons - Only Begin Face Recognition -->
+            <div class="button-group">
+                <button id="start-camera-btn" onclick="startCamera()" class="start-button">👤 Begin Face Recognition</button>
+                <button id="stop-camera-btn" onclick="stopCamera()" class="start-button hidden">⏹️ Stop Camera</button>
+                <button id="checkout-button" onclick="captureAndSendImage()" class="start-button hidden">📸 Capture & Check Out</button>
+            </div>
+
+            <!-- Success Message with Enhanced Details -->
+            <div id="success-message" class="success-message">
+                <div class="success-title">✅ Face Recognized - Successfully Checked Out!</div>
+                <div class="success-time">Check-out Time: <span id="checkout-time"></span></div>
+                <div class="success-duration">Work Duration: <span id="work-duration"></span></div>
+                <div id="timing-status" class="timing-status"></div>
+                <div class="success-note">Goodbye! Have a safe return!</div>
+            </div>
+        </div>
+    </div>
+<script>
+let videoStream;
+let matchedEmployee = null;
+let isEligibleForCheckout = false;
+let currentEmployeeId = null;
+let employeeGender = null;
+let genderBasedTiming = null;
+
+// DOM Elements
+const video = document.getElementById('video');
+const overlay = document.getElementById('camera-overlay');
+const startBtn = document.getElementById('start-camera-btn');
+const stopBtn = document.getElementById('stop-camera-btn');
+const checkoutBtn = document.getElementById('checkout-button');
+const successMsg = document.getElementById('success-message');
+const checkoutTime = document.getElementById('checkout-time');
+const workDuration = document.getElementById('work-duration');
+const timingStatus = document.getElementById('timing-status');
+const employeeFaceImage = document.getElementById('employee-face-image');
+const employeeInfo = document.getElementById('employee-info');
+const employeeTiming = document.getElementById('employee-timing');
+const validationError = document.getElementById('validation-error');
+const validationMessage = document.getElementById('validation-message');
+const validationReason = document.getElementById('validation-reason');
+const statusInfo = document.getElementById('status-info');
+const statusDetails = document.getElementById('status-details');
+const timingInfo = document.getElementById('timing-info');
+const timingDetails = document.getElementById('timing-details');
+const earlyLeaveWarning = document.getElementById('early-leave-warning');
+const earlyLeaveMessage = document.getElementById('early-leave-message');
+const workHoursSummary = document.getElementById('work-hours-summary');
+const expectedHours = document.getElementById('expected-hours');
+const actualHours = document.getElementById('actual-hours');
+const overtimeStatus = document.getElementById('overtime-status');
+
+// Get session data with fallback handling
+function getSessionData() {
+    const employeeId = sessionStorage.getItem("employeeId");
+    const employeeName = sessionStorage.getItem("employeeName");
+    const department = sessionStorage.getItem("department");
+    const usertype = sessionStorage.getItem("usertype");
+    const gender = sessionStorage.getItem("employeeGender");
+
+    return { employeeId, employeeName, department, usertype, gender };
+}
+
+// Initialize page with gender-based timing and error message positioning
+function initializePage() {
+    const { employeeId, employeeName, department, usertype, gender } = getSessionData();
+    
+    // Position error messages below employee face container
+    repositionErrorMessages();
+    
+    // Always show public access mode for face recognition
+    showPublicAccessMode();
+    
+    // Set current employee data if available
+    if (employeeId && employeeId !== "public" && usertype !== "public") {
+        currentEmployeeId = employeeId;
+        employeeGender = gender;
+        // Load employee info but keep public mode for recognition
+        loadEmployeeInfo(employeeId, employeeName, department, gender);
+    }
+}
+
+// NEW FUNCTION: Reposition error messages to appear below employee face container
+function repositionErrorMessages() {
+    const employeeFaceSection = document.querySelector('.employee-face-section');
+    const leftPanel = document.querySelector('.left-panel');
+    
+    if (employeeFaceSection && leftPanel) {
+        // Create error container if it doesn't exist
+        let errorContainer = document.getElementById('error-messages-container');
+        if (!errorContainer) {
+            errorContainer = document.createElement('div');
+            errorContainer.id = 'error-messages-container';
+            errorContainer.style.cssText = `
+                margin-top: 15px;
+                padding: 0;
+                width: 100%;
+                min-height: 120px;
+                max-height: 200px;
+                overflow-y: auto;
+                position: relative;
+            `;
+            
+            // Insert after employee face section
+            employeeFaceSection.parentNode.insertBefore(errorContainer, employeeFaceSection.nextSibling);
+        }
+        
+        // Move validation error to the new container
+        if (validationError && validationError.parentNode !== errorContainer) {
+            errorContainer.appendChild(validationError);
+            // Style the validation error for compact display
+            validationError.style.cssText = `
+                background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+                border: 1px solid #dc3545;
+                color: #721c24;
+                padding: 12px;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                font-size: 13px;
+                line-height: 1.4;
+                box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
+                display: none;
+            `;
+        }
+        
+        // Move status info to the new container
+        if (statusInfo && statusInfo.parentNode !== errorContainer) {
+            errorContainer.appendChild(statusInfo);
+            // Style the status info for compact display
+            statusInfo.style.cssText = `
+                background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+                border: 1px solid #17a2b8;
+                color: #0c5460;
+                padding: 12px;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                font-size: 13px;
+                line-height: 1.4;
+                box-shadow: 0 2px 8px rgba(23, 162, 184, 0.15);
+                display: none;
+            `;
+        }
+        
+        // Adjust left panel layout to accommodate error container
+        leftPanel.style.display = 'flex';
+        leftPanel.style.flexDirection = 'column';
+        leftPanel.style.justifyContent = 'flex-start';
+        leftPanel.style.paddingTop = '20px';
+        
+        // Ensure current time display stays visible
+        const currentTimeDisplay = document.querySelector('.current-time');
+        if (currentTimeDisplay) {
+            currentTimeDisplay.style.marginTop = 'auto';
+            currentTimeDisplay.style.order = '999';
+        }
+    }
+}
+
+// Show public access mode
+function showPublicAccessMode() {
+    employeeFaceImage.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjI1IiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0zMCAxMjBDMzAgMTAwIDUwIDg1IDc1IDg1Uzk1IDEwMCAxMjAgMTIwVjEzMEgzMFYxMjBaIiBmaWxsPSIjQ0NDIi8+Cjwvc3ZnPg==";
+    employeeInfo.textContent = "Public Face Recognition - Camera will identify employee automatically";
+    employeeTiming.textContent = "Employee timing will be determined after face recognition";
+    showStatusInfo("🔍 Face Recognition Mode - Look at the camera for automatic employee identification");
+}
+
+// Load employee info (without API call)
+function loadEmployeeInfo(employeeId, employeeName, department, gender) {
+    if (employeeName) {
+        employeeInfo.textContent = `Session: ${employeeName} | Department: ${department || 'N/A'}`;
+        if (gender) {
+            displayGenderBasedTiming(gender);
+        }
+    }
+}
+
+// Display gender-based timing information
+function displayGenderBasedTiming(gender) {
+    if (!gender) return;
+
+    let timingText = "";
+    let timingClass = "";
+
+    if (gender.toUpperCase() === "FEMALE" || gender.toUpperCase() === "F") {
+        timingText = "👩 Female Employee: 9:30 AM - 5:00 PM (7.5 hours)";
+        timingClass = "female-timing";
+        genderBasedTiming = { start: "09:30", end: "17:00", hours: 7.5, type: "Female" };
+    } else {
+        timingText = "👨 Male Employee: 9:30 AM - 6:00 PM (8.5 hours)";
+        timingClass = "male-timing";
+        genderBasedTiming = { start: "09:30", end: "18:00", hours: 8.5, type: "Male" };
+    }
+
+    employeeTiming.textContent = timingText;
+    employeeTiming.className = `employee-timing ${timingClass}`;
+}
+
+// Show timing information panel
+function showTimingInfo(gender) {
+    let details = "";
+    
+    if (gender && (gender.toUpperCase() === "FEMALE" || gender.toUpperCase() === "F")) {
+        details = `
+            <div class="timing-row">
+                <strong>👩 Female Employee Schedule:</strong><br>
+                • Start Time: 9:30 AM<br>
+                • End Time: 5:00 PM<br>
+                • Expected Hours: 7.5 hours<br>
+                • Late Threshold: 11:00 AM (1.5 hours after start)
+            </div>
+        `;
+    } else {
+        details = `
+            <div class="timing-row">
+                <strong>👨 Male Employee Schedule:</strong><br>
+                • Start Time: 9:30 AM<br>
+                • End Time: 6:00 PM<br>
+                • Expected Hours: 8.5 hours<br>
+                • Late Threshold: 11:00 AM (1.5 hours after start)
+            </div>
+        `;
+    }
+    
+    timingDetails.innerHTML = details;
+    timingInfo.classList.remove('hidden');
+}
+
+// Check early leave status
+function checkEarlyLeaveStatus() {
+    if (!genderBasedTiming) return;
+
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes(); // minutes since midnight
+    const endTime = parseInt(genderBasedTiming.end.split(':')[0]) * 60 + parseInt(genderBasedTiming.end.split(':')[1]);
+
+    if (currentTime < endTime) {
+        const minutesEarly = endTime - currentTime;
+        const hoursEarly = Math.floor(minutesEarly / 60);
+        const remainingMinutes = minutesEarly % 60;
+        
+        let earlyMessage = "";
+        if (hoursEarly > 0) {
+            earlyMessage = `You are leaving ${hoursEarly} hours and ${remainingMinutes} minutes early`;
+        } else {
+            earlyMessage = `You are leaving ${remainingMinutes} minutes early`;
+        }
+        
+        earlyLeaveMessage.textContent = earlyMessage;
+        earlyLeaveWarning.classList.remove('hidden');
+    } else {
+        earlyLeaveWarning.classList.add('hidden');
+    }
+}
+
+// Update time display
+function updateTime() {
+    const now = new Date();
+    document.getElementById('current-time').textContent = now.toLocaleTimeString();
+    
+    // Update early leave status in real-time
+    if (genderBasedTiming && !earlyLeaveWarning.classList.contains('hidden')) {
+        checkEarlyLeaveStatus();
+    }
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+// UPDATED: Show status information in positioned container
+function showStatusInfo(details) {
+    statusDetails.textContent = details;
+    statusInfo.style.display = 'block';
+    statusInfo.classList.remove('hidden');
+    
+    // Ensure error container is properly positioned
+    repositionErrorMessages();
+}
+
+// UPDATED: Hide status information
+function hideStatusInfo() {
+    statusInfo.style.display = 'none';
+    statusInfo.classList.add('hidden');
+}
+
+// UPDATED: Show validation error in positioned container
+function showValidationError(message, reason) {
+    validationMessage.textContent = message;
+    if (reason) {
+        validationReason.innerHTML = reason;
+    }
+    validationError.style.display = 'block';
+    validationError.classList.remove('hidden');
+    
+    // Ensure error container is properly positioned
+    repositionErrorMessages();
+}
+
+// UPDATED: Hide validation error
+function hideValidationError() {
+    validationError.style.display = 'none';
+    validationError.classList.add('hidden');
+}
+
+// Start camera
+async function startCamera() {
+    try {
+        videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = videoStream;
+        overlay.classList.add('hidden');
+        startBtn.classList.add('hidden');
+        stopBtn.classList.remove('hidden');
+        checkoutBtn.classList.remove('hidden');
+        
+        // Update status
+        showStatusInfo("📷 Camera active - Position your face in the camera view and click 'Capture & Check Out'");
+    } catch (err) {
+        console.error('Camera access error:', err);
+        alert('Camera access error: ' + err.message);
+    }
+}
+
+// Stop camera
+function stopCamera() {
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+    }
+    video.srcObject = null;
+    overlay.classList.remove('hidden');
+    startBtn.classList.remove('hidden');
+    stopBtn.classList.add('hidden');
+    checkoutBtn.classList.add('hidden');
+    
+    // Reset status
+    showStatusInfo("🔍 Face Recognition Mode - Click 'Begin Face Recognition' to start");
+}
+
+// Capture image as base64
+function captureBase64Only() {
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const fullData = canvas.toDataURL('image/jpeg');
+    return fullData.split(',')[1];
+}
+
+// Capture and send image for checkout with public face recognition
+async function captureAndSendImage() {
+    try {
+        const base64Image = captureBase64Only();
+        
+        // Clear previous error messages
+        hideValidationError();
+        hideStatusInfo();
+        
+        // Always use public face recognition for automatic employee identification
+        await handlePublicCheckout(base64Image);
+        
+    } catch (err) {
+        console.error('Error during face recognition:', err);
+        showValidationError('System Error', `Error during face recognition: ${err.message}`);
+    }
+}
+
+// Handle public checkout with multiple API endpoint attempts
+async function handlePublicCheckout(base64Image) {
+    try {
+        showStatusInfo("🔍 Processing face recognition...");
+        
+        // Try multiple API endpoints and request formats
+        const apiAttempts = [
+            // Original checkout endpoint
+            {
+                url: 'http://localhost:8080/api/face-recognition/process-checkout',
+                payload: { 
+                    employeeId: "public",
+                    liveImage: base64Image,
+                    action: 'checkout'
+                }
+            },
+            // Alternative checkout endpoint
+            {
+                url: 'http://localhost:8080/api/face-recognition/checkout',
+                payload: { 
+                    employeeId: "public",
+                    liveImage: base64Image,
+                    type: 'checkout'
+                }
+            },
+            // Generic face recognition endpoint with checkout action
+            {
+                url: 'http://localhost:8080/api/face-recognition/recognize',
+                payload: { 
+                    employeeId: "public",
+                    liveImage: base64Image,
+                    action: 'checkout',
+                    type: 'out'
+                }
+            },
+            // Same endpoint as check-in but with different action
+            {
+                url: 'http://localhost:8080/api/face-recognition/process-checkin',
+                payload: { 
+                    employeeId: "public",
+                    liveImage: base64Image,
+                    action: 'checkout'
+                }
+            },
+            // Generic attendance endpoint
+            {
+                url: 'http://localhost:8080/api/attendance/face-recognition',
+                payload: { 
+                    employeeId: "public",
+                    image: base64Image,
+                    type: 'checkout'
+                }
+            }
+        ];
+
+        let lastError = null;
+        
+        for (const attempt of apiAttempts) {
+            try {
+                console.log(`Trying endpoint: ${attempt.url}`);
+                showStatusInfo(`🔍 Attempting face recognition via ${attempt.url.split('/').pop()}...`);
+                
+                const response = await fetch(attempt.url, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(attempt.payload)
+                });
+
+                const result = await response.json();
+                console.log(`Response from ${attempt.url}:`, result);
+                
+                if (response.ok && (result.status === "success" || result.success === true || response.status === 200)) {
+                    // Success - process the result
+                    console.log("Face recognition successful:", result);
+                    await processCheckoutSuccess(result);
+                    return;
+                } else if (result.status === "timing_error") {
+                    // Handle timing validation error specifically
+                    console.log("Timing validation failed:", result);
+                    await handleTimingError(result);
+                    return;
+                } else {
+                    lastError = result.message || result.error || `HTTP ${response.status}`;
+                    console.log(`Failed attempt with ${attempt.url}: ${lastError}`);
+                }
+            } catch (err) {
+                lastError = err.message;
+                console.log(`Error with ${attempt.url}: ${err.message}`);
+                continue;
+            }
+        }
+        
+        // All attempts failed
+        hideStatusInfo();
+        showValidationError(
+            'Face Recognition Failed', 
+            `<strong>Last error:</strong> ${lastError}<br><br>
+            <strong>Please ensure:</strong><br>
+            • You are enrolled in the system<br>
+            • Your face is clearly visible<br>
+            • You have checked in today<br>
+            • The server is running properly`
+        );
+        
+    } catch (err) {
+        console.error('Error in public checkout:', err);
+        hideStatusInfo();
+        showValidationError('System Error', `System error: ${err.message}`);
+    }
+}
+
+// UPDATED: Handle timing validation errors with better positioning
+async function handleTimingError(result) {
+    // Update employee info if available
+    if (result.employee) {
+        const employee = result.employee;
+        if (employee.faceImage) {
+            employeeFaceImage.src = `data:image/jpeg;base64,${employee.faceImage}`;
+        }
+        employeeInfo.textContent = `❌ ${employee.name} | Department: ${employee.department}`;
+        
+        if (employee.gender) {
+            displayGenderBasedTiming(employee.gender);
+            showTimingInfo(employee.gender);
+        }
+    }
+    
+    // Show timing validation error with better formatting
+    let reasonText = "";
+    if (result.earliestCheckoutTime && result.currentTime) {
+        const earliestTime = new Date(`1970-01-01T${result.earliestCheckoutTime}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const currentTime = new Date(`1970-01-01T${result.currentTime}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        reasonText = `
+            <div style="margin-top: 8px;">
+                <div><strong>Current Time:</strong> ${currentTime}</div>
+                <div><strong>Earliest Checkout:</strong> ${earliestTime}</div>
+                <div style="margin-top: 8px; font-style: italic; color: #6c757d;">
+                    Please wait until the allowed checkout time.
+                </div>
+            </div>
+        `;
+    } else {
+        reasonText = `
+            <div style="margin-top: 8px; font-style: italic; color: #6c757d;">
+                Please check the timing requirements for your gender category.
+            </div>
+        `;
+    }
+    
+    showValidationError(
+        result.message || "Checkout not allowed at this time due to gender-based timing restrictions.",
+        reasonText
+    );
+    
+    // Stop camera and hide status
+    stopCamera();
+    hideStatusInfo();
+    
+    // Hide other panels
+    timingInfo.classList.add('hidden');
+    workHoursSummary.classList.add('hidden');
+    successMsg.classList.remove('show');
+}
+
+// Process successful checkout response
+async function processCheckoutSuccess(result) {
+    // Store original camera container dimensions before any changes
+    const cameraContainer = document.querySelector('.camera-container');
+    const originalWidth = cameraContainer.offsetWidth;
+    const originalHeight = cameraContainer.offsetHeight;
+    const originalStyle = cameraContainer.style.cssText;
+    
+    // Clear any error messages
+    hideValidationError();
+    hideStatusInfo();
+    
+    // Update matched employee info with gender-based timing
+    matchedEmployee = result;
+    
+    // Handle different response formats
+    const employeeName = result.employeeName || result.employee_name || result.name || "Unknown Employee";
+    const department = result.department || result.dept || "N/A";
+    const gender = result.employeeGender || result.employee_gender || result.gender;
+    const faceImage = result.employee?.faceImage || result.faceImage || result.face_image;
+    
+    // Update employee display
+    if (faceImage) {
+        employeeFaceImage.src = `data:image/jpeg;base64,${faceImage}`;
+    }
+    employeeInfo.textContent = `✅ Identified: ${employeeName} | Department: ${department}`;
+    
+    // Display gender-based timing for matched employee
+    if (gender) {
+        displayGenderBasedTiming(gender);
+        showTimingInfo(gender);
+        checkEarlyLeaveStatus();
+    }
+    
+    // Show success with enhanced details - MAINTAIN camera container size
+    displayCheckoutSuccess(result, originalWidth, originalHeight, originalStyle);
+}
+
+// Display checkout success with gender-based timing details
+function displayCheckoutSuccess(result, originalWidth, originalHeight, originalStyle) {
+    // Get camera container reference
+    const cameraContainer = document.querySelector('.camera-container');
+    
+    // Parse timing information from result message
+    const now = new Date();
+    checkoutTime.textContent = now.toLocaleTimeString();
+    
+    // Extract work duration from result message
+    const message = result.message || result.details || "";
+    if (message && message.includes('Total work duration:')) {
+        const durationMatch = message.match(/Total work duration: ([^,]+)/);
+        if (durationMatch) {
+            workDuration.textContent = durationMatch[1];
+        }
+        
+        // Extract timing status
+        if (message.includes('Early leave')) {
+            timingStatus.textContent = "⚠️ Early Leave Detected";
+            timingStatus.className = "timing-status early-leave";
+        } else if (message.includes('Overtime')) {
+            timingStatus.textContent = "✅ Overtime Worked";
+            timingStatus.className = "timing-status overtime";
+        } else if (message.includes('Perfect attendance')) {
+            timingStatus.textContent = "🎉 Perfect Attendance!";
+            timingStatus.className = "timing-status perfect";
+        } else {
+            timingStatus.textContent = "✅ Checkout Completed";
+            timingStatus.className = "timing-status normal";
+        }
+    } else {
+        // Calculate duration if check-in time is available
+        const checkInTime = result.checkInTime || result.check_in_time;
+        if (checkInTime) {
+            const checkIn = new Date(checkInTime);
+            const checkOut = new Date();
+            const diffMs = checkOut - checkIn;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            workDuration.textContent = `${diffHours} hours ${diffMinutes} minutes`;
+        } else {
+            workDuration.textContent = "N/A";
+        }
+        
+        timingStatus.textContent = "✅ Checkout Completed";
+        timingStatus.className = "timing-status normal";
+    }
+    
+    // CRITICAL: Preserve camera container size before showing success message
+    if (cameraContainer) {
+        // Force maintain the original dimensions
+        cameraContainer.style.width = originalWidth + 'px';
+        cameraContainer.style.height = originalHeight + 'px';
+        cameraContainer.style.minWidth = originalWidth + 'px';
+        cameraContainer.style.minHeight = originalHeight + 'px';
+        cameraContainer.style.maxWidth = originalWidth + 'px';
+        cameraContainer.style.maxHeight = originalHeight + 'px';
+        cameraContainer.style.flexShrink = '0';
+        cameraContainer.style.flexGrow = '0';
+    }
+    
+    // Show success message
+    successMsg.classList.add('show');
+    
+    // Stop camera but maintain container size
+    stopCameraWithSizePreservation(originalWidth, originalHeight);
+    
+    // Hide timing warnings and error messages
+    earlyLeaveWarning.classList.add('hidden');
+    hideValidationError();
+    hideStatusInfo();
+    
+    // Additional size preservation after DOM changes
+    setTimeout(() => {
+        if (cameraContainer) {
+            cameraContainer.style.width = originalWidth + 'px';
+            cameraContainer.style.height = originalHeight + 'px';
+        }
+    }, 100);
+}
+
+// Modified stop camera function to preserve container size
+function stopCameraWithSizePreservation(originalWidth, originalHeight) {
+    const cameraContainer = document.querySelector('.camera-container');
+    
+    // Preserve size before stopping camera
+    if (cameraContainer && originalWidth && originalHeight) {
+        cameraContainer.style.width = originalWidth + 'px';
+        cameraContainer.style.height = originalHeight + 'px';
+        cameraContainer.style.position = 'relative';
+    }
+    
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+    }
+    video.srcObject = null;
+    overlay.classList.remove('hidden');
+    startBtn.classList.remove('hidden');
+    stopBtn.classList.add('hidden');
+    checkoutBtn.classList.add('hidden');
+    
+    // Maintain size after DOM changes
+    if (cameraContainer && originalWidth && originalHeight) {
+        cameraContainer.style.width = originalWidth + 'px';
+        cameraContainer.style.height = originalHeight + 'px';
+    }
+}
+
+// Go back function
+function goBack() {
+    window.location.href = "EmployeeAttendance.html";
+}
+
+// Initialize page when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>  

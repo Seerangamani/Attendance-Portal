@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Management System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #3d6db8 50%, #4a7bc8 75%, #5a8fd8 100%);
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      overflow: hidden;
+      max-width: 1400px;
+      margin: 0 auto;
+      min-height: 80vh;
+    }
+
+    .header-section {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 50px;
+      margin-bottom: 0;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+    }
+
+    .back-button {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+    }
+
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+    }
+
+    .back-button:active {
+      transform: translateY(0);
+    }
+
+    .back-button::before {
+      content: '←';
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .header-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-center img {
+      height: 60px;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+    }
+
+    .header-center h2 {
+       font-family: "Libertinus Math", system-ui;
+       font-weight: 400;
+       font-style: normal;
+       font-size: 30px;
+       letter-spacing: 3px;
+      color: white;
+      margin: 0;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      padding-bottom: 10px;
+    }
+
+    .content-section {
+      padding: 30px;
+    }
+
+    .search-bar {
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .search-bar::before {
+      content: "🔍";
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #718096;
+      font-size: 16px;
+      z-index: 1;
+    }
+
+    input[type="text"], input[type="email"], input[type="password"], input[type="file"] {
+      width: 100%;
+      padding: 12px 15px 12px 45px;
+      margin: 8px 0 15px 0;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      background: white;
+    }
+
+    input[type="file"] {
+      padding-left: 15px;
+      border: 2px dashed #cbd5e0;
+      background: #f7fafc;
+    }
+
+    input[type="file"]:hover {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    th, td {
+      padding: 15px 12px;
+      text-align: center;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+
+    td {
+      background: white;
+      font-size: 14px;
+      color: #4a5568;
+    }
+
+    tbody tr {
+      transition: all 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(102, 126, 234, 0.05);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 13px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: #cbd5e0;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      width: 450px;
+      max-width: 90%;
+      position: relative;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      margin-bottom: 25px;
+      color: #2d3748;
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #a0aec0;
+      transition: color 0.2s ease;
+    }
+
+    .close:hover {
+      color: #e53e3e;
+    }
+
+    .profile-preview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 15px auto 20px;
+      display: block;
+      border: 4px solid #e2e8f0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .profile-preview:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    #modal-error {
+      color: #e53e3e;
+      margin-bottom: 15px;
+      min-height: 20px;
+      font-weight: 600;
+      text-align: center;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(229, 62, 62, 0.1);
+      border: 1px solid rgba(229, 62, 62, 0.2);
+    }
+
+    #modal-success {
+      color: #38a169;
+      margin-bottom: 15px;
+      min-height: 20px;
+      font-weight: 600;
+      text-align: center;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(56, 161, 105, 0.1);
+      border: 1px solid rgba(56, 161, 105, 0.2);
+    }
+
+    .loading {
+      color: #667eea;
+      font-weight: 600;
+      text-align: center;
+      font-size: 16px;
+      padding: 40px;
+    }
+
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #667eea;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      color: #4a5568;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    /* Profile image in table */
+    table img {
+      border-radius: 50%;
+      border: 2px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+
+    table img:hover {
+      transform: scale(1.1);
+      border-color: #667eea;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+      }
+
+      .header-section {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .header-center {
+        position: static;
+        transform: none;
+      }
+
+      .header-center h2 {
+        font-size: 1.5rem;
+      }
+
+      .back-button {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .content-section {
+        padding: 20px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 10px 8px;
+      }
+
+      .modal-content {
+        width: 95%;
+        padding: 20px;
+      }
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #5a6fd8 0%, #6b4190 100%);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-section">
+    <a href="AdmDashboard.html" class="back-button">
+      Back
+    </a>
+    
+    <div class="header-center">
+      <img src="images/mmw_logo.png" alt="Logo" />
+      <h2>UPDATE EMPLOYEE</h2>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search Employee..." />
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Designation</th>
+          <th>Status</th>
+          <th>Profile</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="employee-table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="updateModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>Update Employee</h3>
+    <div id="modal-error"></div>
+    <div id="modal-success"></div>
+    <input id="modal-usertype" type="text" placeholder="User Type" />
+    <input id="modal-department" type="text" placeholder="Department" />
+    <input id="modal-designation" type="text" placeholder="Designation" />
+    <input id="modal-employeeid" type="text" placeholder="Employee ID" disabled />
+    <input id="modal-username" type="text" placeholder="Username" />
+    <input id="modal-email" type="email" placeholder="Email" />
+    <input id="modal-password" type="password" placeholder="Password" />
+    
+    <label for="modal-profileImage">Change Profile Image:</label>
+    <input id="modal-profileImage" type="file" accept="image/*" />
+    <img id="modal-image" class="profile-preview" src="" alt="Profile" />
+
+    <button id="saveButton" onclick="submitUpdate()">Save</button>
+  </div>
+</div>
+
+<script>
+  let currentEmployee = null;
+
+  function fetchEmployees() {
+    const tbody = document.getElementById('employee-table-body');
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading employees...</td></tr>';
+
+    fetch("http://localhost:8080/api/employees")
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        tbody.innerHTML = '';
+        if (data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7">No employees found</td></tr>';
+          return;
+        }
+
+        data.forEach(emp => {
+          fetch(`http://localhost:8080/api/employees/face-image/${emp.id}`)
+            .then(imgRes => {
+              if (imgRes.ok) {
+                return imgRes.json();
+              }
+              throw new Error('No image');
+            })
+            .then(imgData => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td>${emp.id || 'N/A'}</td>
+                <td>${emp.username || 'N/A'}</td>
+                <td>${emp.department || 'N/A'}</td>
+                <td>${emp.designation || 'N/A'}</td>
+                <td>${emp.usertype || 'N/A'}</td>
+                <td><img src="data:image/jpeg;base64,${imgData.base64Image}" style="width:40px;height:40px;border-radius:50%;" /></td>
+                <td><button onclick='openModal(${JSON.stringify(emp).replace(/'/g, "&#39;")})'>Update</button></td>
+              `;
+              tbody.appendChild(tr);
+            })
+            .catch(() => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td>${emp.id || 'N/A'}</td>
+                <td>${emp.username || 'N/A'}</td>
+                <td>${emp.department || 'N/A'}</td>
+                <td>${emp.designation || 'N/A'}</td>
+                <td>${emp.usertype || 'N/A'}</td>
+                <td><span>No Image</span></td>
+                <td><button onclick='openModal(${JSON.stringify(emp).replace(/'/g, "&#39;")})'>Update</button></td>
+              `;
+              tbody.appendChild(tr);
+            });
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching employees:', error);
+        tbody.innerHTML = '<tr><td colspan="7" style="color: red;">Error loading employees. Please check console for details.</td></tr>';
+      });
+  }
+
+  function openModal(emp) {
+    console.log("openModal called with:", emp);
+    if (!emp) {
+      alert("Error: Employee data not found!");
+      return;
+    }
+    currentEmployee = emp;
+    
+    // Clear previous messages
+    document.getElementById('modal-error').textContent = "";
+    document.getElementById('modal-success').textContent = "";
+    
+    // Populate form fields
+    document.getElementById('modal-usertype').value = emp.usertype || "";
+    document.getElementById('modal-department').value = emp.department || "";
+    document.getElementById('modal-designation').value = emp.designation || "";
+    document.getElementById('modal-employeeid').value = emp.id || "";
+    document.getElementById('modal-username').value = emp.username || "";
+    document.getElementById('modal-email').value = emp.email || "";
+    document.getElementById('modal-password').value = emp.password || "";
+
+    // Load current profile image
+    fetch(`http://localhost:8080/api/employees/face-image/${emp.id}`)
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+        throw new Error('No image available');
+      })
+      .then(img => {
+        document.getElementById('modal-image').src = "data:image/jpeg;base64," + img.base64Image;
+      })
+      .catch(() => {
+        document.getElementById('modal-image').src = "";
+      });
+
+    // Reset file input on open
+    document.getElementById('modal-profileImage').value = "";
+
+    // Preview selected image before upload
+    document.getElementById('modal-profileImage').onchange = function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('modal-image').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    };
+
+    document.getElementById('updateModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('updateModal').style.display = 'none';
+  }
+
+  function submitUpdate() {
+    const errorDiv = document.getElementById('modal-error');
+    const successDiv = document.getElementById('modal-success');
+    const saveButton = document.getElementById('saveButton');
+    
+    // Clear previous messages
+    errorDiv.textContent = "";
+    successDiv.textContent = "";
+
+    // Validate required fields
+    const email = document.getElementById('modal-email').value.trim();
+    const username = document.getElementById('modal-username').value.trim();
+    
+    if (!email) {
+      errorDiv.textContent = "Email cannot be empty.";
+      return;
+    }
+    
+    if (!username) {
+      errorDiv.textContent = "Username cannot be empty.";
+      return;
+    }
+
+    // Disable save button during request
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+
+    const formData = new FormData();
+    const id = currentEmployee.id;
+
+    // Append form data with correct parameter names
+    formData.append("usertype", document.getElementById('modal-usertype').value);
+    formData.append("department", document.getElementById('modal-department').value);
+    formData.append("designation", document.getElementById('modal-designation').value);
+    formData.append("username", username);
+    formData.append("email", email);
+    formData.append("password", document.getElementById('modal-password').value);
+
+    const profileImageFile = document.getElementById('modal-profileImage').files[0];
+    if (profileImageFile) {
+      formData.append("profileImage", profileImageFile);
+    }
+
+    // Debug: Log what we're sending
+    console.log("Updating employee with ID:", id);
+    console.log("FormData contents:");
+    for (let [key, value] of formData.entries()) {
+      console.log(key + ': ' + (value instanceof File ? `File: ${value.name} (${value.size} bytes)` : value));
+    }
+
+    fetch(`http://localhost:8080/api/employees/update/${id}`, {
+      method: "PUT",
+      body: formData
+    })
+    .then(res => {
+      console.log("Response status:", res.status);
+      console.log("Response ok:", res.ok);
+      
+      return res.text().then(text => {
+        if (res.ok) {
+          successDiv.textContent = "Employee updated successfully!";
+          setTimeout(() => {
+            closeModal();
+            fetchEmployees();
+          }, 1500);
+        } else {
+          console.error("Error response:", text);
+          errorDiv.textContent = "Failed to update employee: " + text;
+        }
+      });
+    })
+    .catch(err => {
+      console.error("Fetch error:", err);
+      errorDiv.textContent = "Network error: " + err.message;
+    })
+    .finally(() => {
+      // Re-enable save button
+      saveButton.disabled = false;
+      saveButton.textContent = "Save";
+    });
+  }
+
+  // Search functionality
+  document.getElementById('searchInput').addEventListener('input', function () {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll("#employee-table-body tr");
+    rows.forEach(row => {
+      if (row.children.length > 1) { // Skip loading/error rows
+        const name = row.children[1].textContent.toLowerCase();
+        row.style.display = name.includes(filter) ? "" : "none";
+      }
+    });
+  });
+
+  // Close modal when clicking outside
+  window.onclick = function(event) {
+    const modal = document.getElementById('updateModal');
+    if (event.target === modal) {
+      closeModal();
+    }
+  }
+
+  // Initialize
+  fetchEmployees();
+</script>
+</body>
+</html>

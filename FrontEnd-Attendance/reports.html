@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Employee Attendance Report</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #3d6db8 50%, #4a7bc8 75%, #5a8fd8 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    /* Back Button Styles */
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3);
+      z-index: 1000;
+    }
+
+    .back-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(66, 153, 225, 0.4);
+    }
+
+    .header-section {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      padding: 10px 10px 10px;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 2px,
+        rgba(255, 255, 255, 0.03) 4px
+      );
+      animation: shimmer 20s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .logo-container {
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .logo-container img {
+      height: 100px;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+      border-radius: 10px;
+      /* background: white; */
+      padding: 6px;
+    }
+
+    .header-title {
+       font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 40px;
+    letter-spacing: 6px;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 2;
+      color:darkblue;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+      position: relative;
+      z-index: 2;
+      color: black;
+    }
+
+    .content-section {
+      padding: 20px;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8f9ff 0%, #e8efff 100%);
+      border-radius: 15px;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .employee-count {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .employee-count h2 {
+      font-size: 1.8rem;
+      color: #4a5568;
+      font-weight: 600;
+    }
+
+    .count-badge {
+       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .filter-controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .date-filter-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .date-filter-container:focus-within {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .date-filter-container label {
+      font-size: 12px;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .filter-controls select,
+    .filter-controls input {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      background: white;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      min-width: 180px;
+    }
+
+    .date-filter-container input[type="date"] {
+      border: none;
+      padding: 4px;
+      font-size: 12px;
+      min-width: 120px;
+    }
+
+    .filter-controls select:focus,
+    .filter-controls input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .filter-controls input::placeholder {
+      color: #a0aec0;
+    }
+
+    .filter-btn {
+       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .download-btn {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+    }
+
+    .download-btn:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th {
+       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 18px 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+    }
+
+    table td {
+      padding: 15px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: background-color 0.2s ease;
+      font-size: 14px;
+    }
+
+    table tbody tr:hover {
+      background-color: rgba(102, 126, 234, 0.05);
+      transform: scale(1.001);
+    }
+
+    table tbody tr:nth-child(even) {
+      background-color: rgba(248, 249, 255, 0.5);
+    }
+
+    .teamwise-section {
+      margin-top: 40px;
+    }
+
+    .teamwise-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .teamwise-tabs button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+     /* background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); */
+     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #3d6db8 50%, #4a7bc8 75%, #5a8fd8 100%);
+      color: white;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .teamwise-tabs button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .teamwise-tabs button:active {
+      transform: translateY(0);
+    }
+
+    .status-indicators {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .circle {
+      height: 14px;
+      width: 14px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .green { 
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    }
+    .red { 
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    }
+    .orange { 
+      background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+    }
+    .blue { 
+      background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    }
+
+    #teamwiseAttendance tbody tr.summary-row {
+      border-bottom: 3px solid #667eea;
+      background: linear-gradient(135deg, #e8efff 0%, #f0f4ff 100%);
+    }
+
+    #teamwiseAttendance tbody tr.summary-row td {
+      font-weight: 700;
+      color: #4a5568;
+      font-size: 15px;
+    }
+
+    .download-section {
+      text-align: center;
+      margin: 30px 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8f9ff 0%, #e8efff 100%);
+      border-radius: 15px;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .section-title {
+           font-family: "Libertinus Math", system-ui;
+       font-weight: 400;
+       font-style: normal;
+       font-size: 30px;
+       letter-spacing: 3px;
+      color: #4a5568;
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
+      padding: 5px;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-bar {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .filter-controls {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .filter-controls select,
+      .filter-controls input {
+        min-width: 200px;
+      }
+
+      .header-title {
+        font-size: 2rem;
+      }
+
+      .teamwise-tabs {
+        justify-content: center;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      table th,
+      table td {
+        padding: 10px 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .content-section {
+        padding: 20px;
+      }
+
+      .header-section {
+        padding: 60px 20px 20px;
+      }
+
+      .header-title {
+        font-size: 1.8rem;
+      }
+
+      .filter-controls select,
+      .filter-controls input {
+        min-width: 100%;
+      }
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* PDF specific styles */
+    @media print {
+      body {
+        background: white !important;
+        padding: 0;
+      }
+      .container {
+        background: white !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+      .header-section {
+        background: white !important;
+        color: black !important;
+      }
+      .header-bar select, 
+      .header-bar input, 
+      .download-btn, 
+      .teamwise-tabs,
+      .back-button {
+        display: none !important;
+      }
+      table {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Back Button
+  <button class="back-button" onclick="goBack()">
+    ← Back to Dashboard
+  </button> -->
+
+  <div class="container">
+     <!-- Back Button -->
+  <button class="back-button" onclick="goBack()">
+    ← Back to Dashboard
+  </button>
+    <!-- Enhanced Header Section -->
+    <div class="header-section">
+      <div class="logo-container">
+        <img src="images/mmw_logo.png" alt="Company Logo" style="height: 60px;">
+      </div>
+      <h1 class="header-title">Employee Attendance Report</h1>
+      <p class="header-subtitle">Real-time attendance tracking and management system</p>
+    </div>
+
+    <div class="content-section">
+      <!-- Enhanced Header Bar -->
+      <div class="header-bar">
+        <div class="employee-count">
+          <h2>Total Employees: <span class="count-badge" id="totalEmployees">0</span></h2>
+        </div>
+        <div class="filter-controls">
+          <!-- Date Filter -->
+          <div class="date-filter-container">
+            <label for="startDate">From:</label>
+            <input type="date" id="startDate">
+            <label for="endDate">To:</label>
+            <input type="date" id="endDate">
+            <button class="filter-btn" onclick="applyDateFilter()">Apply Filter</button>
+            <button class="filter-btn" onclick="clearFilters()" style="background: #6c757d;">Clear</button>
+          </div>
+          
+          <select id="departmentFilter" onchange="applyFilters()">
+            <option value="All">All Departments</option>
+            <option value="Office">Office</option>
+            <option value="Production">Production</option>
+          </select>
+          <input type="text" id="employeeSearch" placeholder="🔍 Search Employee..." oninput="handleSearch()">
+        </div>
+      </div>
+
+      <!-- Enhanced Employee Table -->
+      <div class="table-container">
+        <h3 class="section-title">Employee Attendance Details</h3>
+        <div id="loadingIndicator" style="display: none; text-align: center; padding: 20px;">
+          <div class="loading"></div> Loading data...
+        </div>
+        <table id="employeeStatusTable">
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Employee ID</th>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Designation</th>
+              <th>UserType</th>
+              <th>Date</th>
+              <th>Check-In</th>
+              <th>Check-Out</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- Enhanced Download Section -->
+      <div class="download-section">
+        <button class="download-btn" onclick="generatePDF()" id="downloadBtn">
+          📄 Download PDF Report
+        </button>
+      </div>
+
+      <!-- Enhanced Teamwise Section -->
+      <div class="teamwise-section">
+        <h3 class="section-title">Team-wise Summary</h3>
+        
+        <div class="teamwise-tabs">
+          <button onclick="loadTeamwiseData('All')" class="active">📊 All Teams</button>
+          <button onclick="loadTeamwiseData('Office')">🏢 Office</button>
+          <button onclick="loadTeamwiseData('Production')">🏭 Production</button>
+        </div>
+
+        <div class="table-container">
+          <table id="teamwiseAttendance">
+            <thead>
+              <tr>
+                <th>Team</th>
+                <th>
+                  <div class="status-indicators">
+                    <span class="circle green"></span>
+                    Present
+                  </div>
+                </th>
+                <th>
+                  <div class="status-indicators">
+                    <span class="circle orange"></span>
+                    Late
+                  </div>
+                </th>
+                <th>
+                  <div class="status-indicators">
+                    <span class="circle red"></span>
+                    Absent
+                  </div>
+                </th>
+                <th>
+                  <div class="status-indicators">
+                    <span class="circle blue"></span>
+                    On Duty
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include jsPDF library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+const apiUrl = 'http://localhost:8080/api/report/attendance-report';
+
+// Store current data for PDF generation and filtering
+let currentEmployeeData = [];
+let currentTeamwiseData = {};
+let allEmployeesData = [];
+let searchTimeout;
+
+// Enhanced fetch function with better error handling
+async function fetchWithRetry(url, options = {}, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      console.log(`Fetching data from: ${url}`);
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const data = await response.json();
+      console.log('API Response:', data);
+      return data;
+    } catch (error) {
+      console.error(`Fetch attempt ${i + 1} failed:`, error);
+      if (i === retries - 1) throw error;
+      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+    }
+  }
+}
+
+// Back button function
+function goBack() {
+  window.location.href = 'AdmDashboard.html';
+}
+
+// Set default date to today
+function setDefaultDates() {
+  const today = new Date().toISOString().split('T')[0];
+  const startDateInput = document.getElementById('startDate');
+  const endDateInput = document.getElementById('endDate');
+  
+  if (startDateInput) startDateInput.value = today;
+  if (endDateInput) endDateInput.value = today;
+}
+
+// Clear all filters
+function clearFilters() {
+  document.getElementById('startDate').value = '';
+  document.getElementById('endDate').value = '';
+  document.getElementById('departmentFilter').value = 'All';
+  document.getElementById('employeeSearch').value = '';
+  
+  // Load data without filters
+  loadEmployeeStatus();
+  loadTeamwiseData('All');
+}
+
+// Apply date filter with validation
+function applyDateFilter() {
+  const startDate = document.getElementById('startDate').value;
+  const endDate = document.getElementById('endDate').value;
+  
+  // Validate date range
+  if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+    alert('Start date cannot be after end date');
+    return;
+  }
+  
+  if (!startDate && !endDate) {
+    alert('Please select at least one date');
+    return;
+  }
+  
+  loadEmployeeStatus();
+  loadTeamwiseData('All');
+}
+
+// Apply all filters
+function applyFilters() {
+  loadEmployeeStatus();
+  loadTeamwiseData('All');
+}
+
+// Fetch total employees count
+async function fetchTotalEmployees() {
+  try {
+    const data = await fetchWithRetry(`${apiUrl}/total-employee-count`);
+    document.getElementById('totalEmployees').textContent = data || '0';
+  } catch (error) {
+    console.error("Error fetching employee count:", error);
+    document.getElementById('totalEmployees').textContent = '0';
+  }
+}
+
+// Load employee status with comprehensive filtering
+async function loadEmployeeStatus() {
+  showLoading(true);
+  
+  const selectedUserType = document.getElementById('departmentFilter').value;
+  const name = document.getElementById('employeeSearch').value.trim();
+  const startDate = document.getElementById('startDate').value;
+  const endDate = document.getElementById('endDate').value;
+
+  let url = `${apiUrl}/today-status`;
+  const params = new URLSearchParams();
+
+  // Add filters to URL parameters
+  if (selectedUserType && selectedUserType !== 'All') {
+    params.append("usertype", selectedUserType);
+  }
+  if (name) {
+    params.append("name", name);
+  }
+  if (startDate) {
+    params.append("startDate", startDate);
+  }
+  if (endDate) {
+    params.append("endDate", endDate);
+  }
+  
+  if (params.toString()) {
+    url += "?" + params.toString();
+  }
+
+  console.log("Fetching employee data from:", url);
+
+  try {
+    const data = await fetchWithRetry(url);
+    console.log("Received employee data:", data);
+    
+    currentEmployeeData = Array.isArray(data) ? data : [];
+    populateEmployeeTable(currentEmployeeData);
+    
+  } catch (error) {
+    console.error("Error fetching employee status:", error);
+    showErrorInTable('employeeStatusTable', 10, `Failed to load data: ${error.message}`);
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Show/hide loading indicator
+function showLoading(show) {
+  const indicator = document.getElementById('loadingIndicator');
+  const table = document.getElementById('employeeStatusTable');
+  
+  if (show) {
+    indicator.style.display = 'block';
+    table.style.opacity = '0.5';
+  } else {
+    indicator.style.display = 'none';
+    table.style.opacity = '1';
+  }
+}
+
+// Populate employee table with dynamic data
+function populateEmployeeTable(data) {
+  const tbody = document.querySelector('#employeeStatusTable tbody');
+  tbody.innerHTML = '';
+
+  if (!Array.isArray(data) || data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 20px; color: #666;">No records found for the selected criteria</td></tr>`;
+    return;
+  }
+
+  data.forEach((employee, index) => {
+    const row = document.createElement('tr');
+    
+    // Format date for display
+    let displayDate = '-';
+    if (employee.date) {
+      displayDate = formatDate(employee.date);
+    }
+
+    // Handle different possible field names from API
+    const employeeId = employee.employeeId || employee.id || employee.empId || '-';
+    const employeeName = employee.employeeName || employee.username || employee.name || employee.fullName || '-';
+    const department = employee.department || employee.usertype || employee.dept || '-';
+    const designation = employee.designation || employee.role || employee.position || '-';
+    const userType = employee.usertype || employee.userType || employee.category || '-';
+    const checkinTime = formatTime(employee.checkinTime || employee.checkIn || employee.checkInTime || employee.loginTime);
+    const checkoutTime = formatTime(employee.checkoutTime || employee.checkOut || employee.checkOutTime || employee.logoutTime);
+    const status = employee.status || employee.attendanceStatus || employee.currentStatus || 'Absent';
+
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${employeeId}</td>
+      <td>${employeeName}</td>
+      <td>${department}</td>
+      <td>${designation}</td>
+      <td>${userType}</td>
+      <td>${displayDate}</td>
+      <td>${checkinTime}</td>
+      <td>${checkoutTime}</td>
+      <td><span class="status-badge status-${status.toLowerCase().replace(/\s+/g, '-')}">${status}</span></td>
+    `;
+    
+    tbody.appendChild(row);
+  });
+}
+
+// Load teamwise attendance summary
+async function loadTeamwiseData(selectedTeam) {
+  // Update active tab
+  updateActiveTab(selectedTeam);
+  
+  const startDate = document.getElementById('startDate').value;
+  const endDate = document.getElementById('endDate').value;
+  
+  let url = `${apiUrl}/teamwise-summary`;
+  const params = new URLSearchParams();
+  
+  if (startDate) params.append("startDate", startDate);
+  if (endDate) params.append("endDate", endDate);
+  
+  if (params.toString()) url += "?" + params.toString();
+
+  console.log("Fetching teamwise data from:", url);
+
+  try {
+    const data = await fetchWithRetry(url);
+    console.log("Received teamwise data:", data);
+    
+    currentTeamwiseData = data || {};
+    populateTeamwiseTable(selectedTeam);
+    
+  } catch (error) {
+    console.error("Error fetching teamwise data:", error);
+    showErrorInTable('teamwiseAttendance', 5, 'Failed to load teamwise data');
+  }
+}
+
+// Update active tab styling
+function updateActiveTab(selectedTeam) {
+  document.querySelectorAll('.teamwise-tabs button').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  const buttons = document.querySelectorAll('.teamwise-tabs button');
+  if (selectedTeam === 'All') buttons[0]?.classList.add('active');
+  else if (selectedTeam === 'Office') buttons[1]?.classList.add('active');
+  else if (selectedTeam === 'Production') buttons[2]?.classList.add('active');
+}
+
+// Populate teamwise table
+function populateTeamwiseTable(selectedTeam) {
+  const tbody = document.querySelector('#teamwiseAttendance tbody');
+  tbody.innerHTML = '';
+
+  // Handle different possible data structures and normalize keys
+  const office = currentTeamwiseData['office'] || currentTeamwiseData['Office'] || 
+                currentTeamwiseData['OFFICE'] || { Present: 0, Late: 0, Absent: 0, 'On Duty': 0, 'on duty': 0 };
+  const production = currentTeamwiseData['production'] || currentTeamwiseData['Production'] || 
+                    currentTeamwiseData['PRODUCTION'] || { Present: 0, Late: 0, Absent: 0, 'On Duty': 0, 'on duty': 0 };
+
+  // Normalize the data to handle different key variations for "On Duty"
+  const normalizeTeamData = (teamData) => {
+    return {
+      Present: teamData.Present || teamData.present || 0,
+      Late: teamData.Late || teamData.late || 0,
+      Absent: teamData.Absent || teamData.absent || 0,
+      'On Duty': teamData['On Duty'] || teamData['on duty'] || teamData.onDuty || teamData['On Leave'] || teamData['on leave'] || 0
+    };
+  };
+
+  const normalizedOffice = normalizeTeamData(office);
+  const normalizedProduction = normalizeTeamData(production);
+
+  // Calculate totals
+  const totals = {
+    Present: normalizedOffice.Present + normalizedProduction.Present,
+    Late: normalizedOffice.Late + normalizedProduction.Late,
+    Absent: normalizedOffice.Absent + normalizedProduction.Absent,
+    'On Duty': normalizedOffice['On Duty'] + normalizedProduction['On Duty']
+  };
+
+  // Add rows based on selected team filter
+  if (selectedTeam === 'All') {
+    addTeamwiseRow(tbody, 'All Teams', totals, 'summary-row');
+    addTeamwiseRow(tbody, 'Office', normalizedOffice);
+    addTeamwiseRow(tbody, 'Production', normalizedProduction);
+  } else if (selectedTeam === 'Office') {
+    addTeamwiseRow(tbody, 'Office', normalizedOffice);
+  } else if (selectedTeam === 'Production') {
+    addTeamwiseRow(tbody, 'Production', normalizedProduction);
+  }
+}
+
+// Helper function to add teamwise table rows
+function addTeamwiseRow(tbody, teamName, data, extraClass = '') {
+  const row = document.createElement('tr');
+  if (extraClass) row.className = extraClass;
+  
+  row.innerHTML = `
+    <td style="font-weight: ${extraClass ? 'bold' : 'normal'}">${teamName}</td>
+    <td><span class="count-badge" style="background: #28a745;">${data.Present || 0}</span></td>
+    <td><span class="count-badge" style="background: #fd7e14;">${data.Late || 0}</span></td>
+    <td><span class="count-badge" style="background: #dc3545;">${data.Absent || 0}</span></td>
+    <td><span class="count-badge" style="background: #007bff;">${data['On Duty'] || 0}</span></td>
+  `;
+  
+  tbody.appendChild(row);
+}
+
+// Show error message in table
+function showErrorInTable(tableId, colspan, message) {
+  const tbody = document.querySelector(`#${tableId} tbody`);
+  tbody.innerHTML = `<tr><td colspan="${colspan}" class="error-message">${message}</td></tr>`;
+}
+
+// Format date utility function
+function formatDate(dateString) {
+  if (!dateString) return '-';
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // Return original if invalid
+    
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit', 
+      year: 'numeric'
+    });
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return dateString;
+  }
+}
+
+// Format time utility function
+function formatTime(timeString) {
+  if (!timeString) return '-';
+  
+  try {
+    // Handle both LocalTime format and full datetime
+    if (timeString.includes('T')) {
+      return new Date(timeString).toLocaleTimeString('en-GB', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    }
+    
+    // Handle LocalTime format (HH:MM:SS or HH:MM)
+    if (timeString.includes(':')) {
+      const timeParts = timeString.split(':');
+      if (timeParts.length >= 2) {
+        return `${timeParts[0].padStart(2, '0')}:${timeParts[1].padStart(2, '0')}`;
+      }
+    }
+    
+    return timeString;
+  } catch (error) {
+    console.error('Error formatting time:', error);
+    return timeString;
+  }
+}
+
+// Enhanced search functionality with debouncing
+function handleSearch() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    loadEmployeeStatus();
+  }, 500); // 500ms delay for better performance
+}
+
+// Enhanced PDF generation
+function generatePDF() {
+  const downloadBtn = document.getElementById('downloadBtn');
+  const originalText = downloadBtn.innerHTML;
+  downloadBtn.innerHTML = '<div class="loading"></div> Generating PDF...';
+  downloadBtn.disabled = true;
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('l', 'mm', 'a4');
+
+    // Add title and metadata
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('Employee Attendance Report', 20, 25);
+
+    const currentDate = new Date().toLocaleDateString();
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const selectedFilter = document.getElementById('departmentFilter').value;
+    const searchTerm = document.getElementById('employeeSearch').value.trim();
+
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Generated on: ${currentDate}`, 20, 35);
+
+    let yPosition = 50;
+    
+    // Add filters information
+    if (startDate || endDate) {
+      const fromDate = startDate ? formatDate(startDate) : 'Not specified';
+      const toDate = endDate ? formatDate(endDate) : 'Not specified';
+      doc.text(`Date Range: ${fromDate} to ${toDate}`, 20, yPosition);
+      yPosition += 7;
+    }
+
+    if (selectedFilter !== 'All' || searchTerm) {
+      doc.text(`Filters Applied:`, 20, yPosition);
+      yPosition += 7;
+      if (selectedFilter !== 'All') {
+        doc.text(`- Department: ${selectedFilter}`, 25, yPosition);
+        yPosition += 7;
+      }
+      if (searchTerm) {
+        doc.text(`- Search: ${searchTerm}`, 25, yPosition);
+        yPosition += 7;
+      }
+      yPosition += 5;
+    }
+
+    // Employee data table
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text('Employee Attendance Details', 20, yPosition);
+    
+    const employeeHeaders = ['S.No', 'Employee ID', 'Name', 'Department', 'Designation', 'UserType', 'Date', 'Check-In', 'Check-Out', 'Status'];
+    const employeeRows = currentEmployeeData.map((record, index) => {
+      let displayDate = '-';
+      if (record.date) {
+        displayDate = formatDate(record.date);
+      }
+
+      return [
+        (index + 1).toString(),
+        record.employeeId || record.id || '-',
+        record.employeeName || record.username || record.name || '-',
+        record.department || record.usertype || '-',
+        record.designation || record.role || '-',
+        record.usertype || record.userType || '-',
+        displayDate,
+        formatTime(record.checkinTime || record.checkIn || record.checkInTime),
+        formatTime(record.checkoutTime || record.checkOut || record.checkOutTime),
+        record.status || record.attendanceStatus || '-'
+      ];
+    });
+
+    doc.autoTable({
+      head: [employeeHeaders],
+      body: employeeRows,
+      startY: yPosition + 10,
+      styles: { fontSize: 7, cellPadding: 1.5 },
+      headStyles: { fillColor: [0, 123, 255], textColor: [255, 255, 255] },
+      columnStyles: {
+        0: { cellWidth: 12 },  1: { cellWidth: 20 },  2: { cellWidth: 35 },
+        3: { cellWidth: 22 },  4: { cellWidth: 25 },  5: { cellWidth: 18 },
+        6: { cellWidth: 20 },  7: { cellWidth: 20 },  8: { cellWidth: 20 },  9: { cellWidth: 18 }
+      }
+    });
+
+    // Teamwise summary
+    const finalY = doc.lastAutoTable.finalY + 20;
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text('Team-wise Summary', 20, finalY);
+
+    const office = currentTeamwiseData['office'] || currentTeamwiseData['Office'] || { Present: 0, Late: 0, Absent: 0, 'On Duty': 0, 'on duty': 0 };
+    const production = currentTeamwiseData['production'] || currentTeamwiseData['Production'] || { Present: 0, Late: 0, Absent: 0, 'On Duty': 0, 'on duty': 0 };
+    
+    // Normalize data for PDF
+    const normalizeForPDF = (teamData) => ({
+      Present: teamData.Present || teamData.present || 0,
+      Late: teamData.Late || teamData.late || 0,
+      Absent: teamData.Absent || teamData.absent || 0,
+      'On Duty': teamData['On Duty'] || teamData['on duty'] || teamData.onDuty || teamData['On Leave'] || teamData['on leave'] || 0
+    });
+
+    const normalizedOffice = normalizeForPDF(office);
+    const normalizedProduction = normalizeForPDF(production);
+
+    const teamwiseHeaders = ['Team', 'Present', 'Late', 'Absent', 'On Duty'];
+    const teamwiseRows = [
+      ['Office', normalizedOffice.Present, normalizedOffice.Late, normalizedOffice.Absent, normalizedOffice['On Duty']],
+      ['Production', normalizedProduction.Present, normalizedProduction.Late, normalizedProduction.Absent, normalizedProduction['On Duty']],
+      ['Total', 
+        normalizedOffice.Present + normalizedProduction.Present,
+        normalizedOffice.Late + normalizedProduction.Late,
+        normalizedOffice.Absent + normalizedProduction.Absent,
+        normalizedOffice['On Duty'] + normalizedProduction['On Duty']
+      ]
+    ];
+
+    doc.autoTable({
+      head: [teamwiseHeaders],
+      body: teamwiseRows,
+      startY: finalY + 10,
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [0, 123, 255], textColor: [255, 255, 255] },
+      bodyStyles: {
+        0: { fillColor: [248, 249, 250] },
+        1: { fillColor: [248, 249, 250] },
+        2: { fillColor: [230, 240, 255], fontStyle: 'bold' }
+      }
+    });
+
+    // Save PDF
+    const dateStr = currentDate.replace(/\//g, '-');
+    const fileName = `Attendance_Report_${dateStr}.pdf`;
+    doc.save(fileName);
+
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    alert('Error generating PDF. Please try again.');
+  } finally {
+    downloadBtn.innerHTML = originalText;
+    downloadBtn.disabled = false;
+  }
+}
+
+// Initialize application
+function initializeApp() {
+  console.log("Initializing Attendance Report Application...");
+  
+  setDefaultDates();
+  
+  // Load initial data
+  fetchTotalEmployees();
+  loadEmployeeStatus();
+  loadTeamwiseData('All');
+  
+  console.log("Application initialized successfully");
+}
+
+// Document ready event
+document.addEventListener('DOMContentLoaded', initializeApp);
+
+// Global functions for HTML onclick events
+window.goBack = goBack;
+window.applyDateFilter = applyDateFilter;
+window.loadTeamwiseData = loadTeamwiseData;
+window.generatePDF = generatePDF;
+window.clearFilters = clearFilters;
+window.applyFilters = applyFilters;
+window.handleSearch = handleSearch;
+</script>
+</body>
+</html>

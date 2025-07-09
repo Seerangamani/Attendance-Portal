@@ -1,0 +1,5 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "livePreview.defaultPreviewPath": "/FrontEnd-Attendance/login.html",
+    "liveServer.settings.port": 5501
+}

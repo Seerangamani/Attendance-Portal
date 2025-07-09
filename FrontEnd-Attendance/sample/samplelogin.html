@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Login Page</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #eef3f7;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 20px 0;
+    }
+
+    /* Professional animated background elements */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 15% 85%, rgba(90, 143, 216, 0.3) 0%, transparent 40%),
+        radial-gradient(circle at 85% 15%, rgba(74, 123, 200, 0.25) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(61, 109, 184, 0.2) 0%, transparent 50%),
+        linear-gradient(45deg, rgba(30, 60, 114, 0.1) 0%, rgba(90, 143, 216, 0.1) 100%);
+      animation: professionalFloat 25s ease-in-out infinite;
+    }
+
+    @keyframes professionalFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.8; }
+      25% { transform: translateY(-5px) rotate(0.5deg); opacity: 0.9; }
+      50% { transform: translateY(8px) rotate(-0.5deg); opacity: 0.7; }
+      75% { transform: translateY(-3px) rotate(0.3deg); opacity: 0.85; }
+    }
+
+    /* Flying Butterfly Animations */
+    .butterfly {
+      position: absolute;
+      width: 40px;
+      height: 30px;
+      opacity: 0.6;
+      animation: butterflyFly 20s ease-in-out infinite;
+    }
+
+    .butterfly::before,
+    .butterfly::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 20px;
+      background: linear-gradient(45deg, rgba(74, 123, 200, 0.8), rgba(90, 143, 216, 0.9));
+      border-radius: 50% 10% 50% 10%;
+      animation: butterflyWing 2s ease-in-out infinite;
+    }
+
+    .butterfly::before {
+      left: 0;
+      transform-origin: bottom right;
+    }
+
+    .butterfly::after {
+      right: 0;
+      transform-origin: bottom left;
+      animation-delay: 0.1s;
+    }
+
+    .butterfly-body {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 2px;
+      height: 25px;
+      background: linear-gradient(to bottom, #2a5298, #1e3c72);
+      border-radius: 10px;
+    }
+
+    @keyframes butterflyFly {
+      0% { transform: translateX(-100px) translateY(50vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.6; }
+      20% { transform: translateX(10vw) translateY(40vh) rotate(5deg); }
+      40% { transform: translateX(30vw) translateY(60vh) rotate(-3deg); }
+      60% { transform: translateX(50vw) translateY(30vh) rotate(8deg); }
+      80% { transform: translateX(70vw) translateY(55vh) rotate(-5deg); }
+      90% { opacity: 0.6; }
+      100% { transform: translateX(110vw) translateY(45vh) rotate(0deg); opacity: 0; }
+    }
+
+    @keyframes butterflyWing {
+      0%, 100% { transform: rotateY(0deg) rotateX(0deg); }
+      50% { transform: rotateY(-30deg) rotateX(10deg); }
+    }
+
+    /* Multiple butterflies with different paths */
+    .butterfly:nth-child(1) { animation-delay: 0s; top: 20%; }
+    .butterfly:nth-child(2) { animation-delay: 5s; top: 40%; animation-duration: 25s; }
+    .butterfly:nth-child(3) { animation-delay: 10s; top: 60%; animation-duration: 18s; }
+    .butterfly:nth-child(4) { animation-delay: 15s; top: 80%; animation-duration: 22s; }
+    .butterfly:nth-child(5) { animation-delay: 20s; top: 30%; animation-duration: 28s; }
+
+    .logo {
+      width: 100px;
+      height: 90px;
+      object-fit: contain;
+      margin-bottom: 25px;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2));
+      animation: logoFloat 6s ease-in-out infinite;
+      position: relative;
+      z-index: 10;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 30px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 
+        0 20px 40px rgba(30, 60, 114, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.3);
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      animation: slideUp 0.8s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      border-radius: 20px;
+      pointer-events: none;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #1a1a2e;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .input-group {
+      position: relative;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #4a4a6a;
+      margin-bottom: 6px;
+      transition: color 0.3s ease;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 2px solid rgba(42, 82, 152, 0.15);
+      background: rgba(255, 255, 255, 0.9);
+      font-size: 15px;
+      font-weight: 400;
+      color: #1a1a2e;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2a5298;
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-2px);
+      box-shadow: 
+        0 8px 16px rgba(42, 82, 152, 0.15),
+        0 0 0 4px rgba(42, 82, 152, 0.1);
+    }
+
+    input:focus + label, select:focus + label {
+      color: #2a5298;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 14px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 44px;
+    }
+
+    button {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 8px;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a4d7a 100%);
+      transform: translateY(-3px);
+      box-shadow: 
+        0 16px 32px rgba(42, 82, 152, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:active {
+      transform: translateY(-1px);
+    }
+
+    /* Professional floating elements */
+    .professional-particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      animation: professionalParticle 18s infinite linear;
+    }
+
+    @keyframes professionalParticle {
+      0% {
+        transform: translateY(100vh) translateX(0px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.4;
+      }
+      90% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(80px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+      body {
+        padding: 15px 0;
+      }
+      
+      .login-container {
+        margin: 0 15px;
+        padding: 25px 20px;
+        max-width: calc(100% - 30px);
+      }
+      
+      h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      
+      .logo {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 20px;
+      }
+      
+      form {
+        gap: 14px;
+      }
+      
+      input, select {
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+      
+      button {
+        padding: 14px 18px;
+        font-size: 14px;
+      }
+
+      .butterfly {
+        width: 30px;
+        height: 22px;
+      }
+    }
+
+    @media (max-height: 600px) {
+      .logo {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+      }
+      
+      .login-container {
+        padding: 20px;
+      }
+      
+      h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+      
+      form {
+        gap: 12px;
+      }
+    }
+
+    /* Loading state for button */
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Enhanced focus visibility for accessibility */
+    input:focus-visible, select:focus-visible, button:focus-visible {
+      outline: 2px solid #2a5298;
+      outline-offset: 2px;
+    }
+
+    /* Professional glow effect on container */
+    .login-container {
+      position: relative;
+    }
+
+    .login-container::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #2a5298, #1e3c72, #2a5298);
+      border-radius: 22px;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .login-container:hover::after {
+      opacity: 0.15;
+    }
+  </style>
+</head>
+<body>
+  <!-- Flying Butterflies -->
+  <div class="butterfly">
+    <div class="butterfly-body"></div>
+  </div>
+  <div class="butterfly">
+    <div class="butterfly-body"></div>
+  </div>
+  <div class="butterfly">
+    <div class="butterfly-body"></div>
+  </div>
+  <div class="butterfly">
+    <div class="butterfly-body"></div>
+  </div>
+  <div class="butterfly">
+    <div class="butterfly-body"></div>
+  </div>
+
+  <!-- Professional floating particles -->
+  <div class="professional-particle" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="professional-particle" style="left: 20%; animation-delay: 3s;"></div>
+  <div class="professional-particle" style="left: 30%; animation-delay: 6s;"></div>
+  <div class="professional-particle" style="left: 40%; animation-delay: 9s;"></div>
+  <div class="professional-particle" style="left: 50%; animation-delay: 12s;"></div>
+  <div class="professional-particle" style="left: 60%; animation-delay: 15s;"></div>
+  <div class="professional-particle" style="left: 70%; animation-delay: 18s;"></div>
+  <div class="professional-particle" style="left: 80%; animation-delay: 21s;"></div>
+  <div class="professional-particle" style="left: 90%; animation-delay: 24s;"></div>
+
+  <img src="images/mmw_logo.png" alt="Logo" class="logo" />
+
+  <div class="login-container">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="usertype">User Type</label>
+        <select id="usertype" name="usertype" required>
+          <option value="">Select</option>
+          <option value="admin">Admin</option>
+          <option value="employee">Employee</option>
+          <option value="public">Public</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="userid">ID</label>
+        <input type="text" id="userid" name="id" required />
+      </div>
+
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const data = {
+        usertype: document.getElementById("usertype").value,
+        id: document.getElementById("userid").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+      };
+
+      fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (!response.ok) { 
+          return response.text().then(text => { 
+            throw new Error(text || 'Login failed'); 
+          });
+        }
+        return response.json();
+      })
+      .then(result => {
+        console.log('Login result:', result);
+        
+        // Store session data based on user type
+        if (result.usertype === "admin") {
+          // Store admin data
+          sessionStorage.setItem("adminId", result.id);
+          sessionStorage.setItem("adminEmail", result.email);
+          sessionStorage.setItem("usertype", result.usertype);
+          
+          alert(result.message || "Admin login successful");
+          window.location.href = "AdmDashboard.html";
+          
+        } else if (result.usertype === "public") {
+          // Store public user data — include all needed for session validation
+          sessionStorage.setItem("employeeId", result.id || "Pub01");
+          sessionStorage.setItem("employeeName", result.username || "Public User");
+          sessionStorage.setItem("department", "Public"); // 🔴 This is what was missing
+          sessionStorage.setItem("usertype", "public");
+          sessionStorage.setItem("email", result.email || "");
+
+          alert("Public access granted. Redirecting to Employee Attendance Page.");
+          window.location.href = "EmployeeAttendance.html";
+        }
+        else if (result.usertype === "employee") {
+          // Store employee data
+          sessionStorage.setItem("employeeId", result.id);
+          sessionStorage.setItem("employeeName", result.username);
+          sessionStorage.setItem("department", result.department);
+          sessionStorage.setItem("designation", result.designation);
+          sessionStorage.setItem("usertype", result.usertype);
+          sessionStorage.setItem("gender", result.gender);
+          sessionStorage.setItem("email", result.email);
+          
+          // Store profile image if available
+          if (result.profileImage) {
+            sessionStorage.setItem("profileImage", result.profileImage);
+          }
+          
+          alert("Employee login successful. Welcome " + (result.username || 'User'));
+          window.location.href = "EmployeePortal.html";
+          
+        } else {
+          // Fallback for any other user types
+          alert("Login successful. Welcome " + (result.username || 'User'));
+          window.location.href = "EmployeePortal.html";    
+        }
+      })
+      .catch(error => {
+        console.error("Login failed:", error);
+        let errorMessage = "Login failed";
+        
+        // Try to parse error message if it's JSON
+        try {
+          const errorObj = JSON.parse(error.message);
+          errorMessage = errorObj.error || errorObj.message || "Login failed";
+        } catch (e) {
+          // If not JSON, use the error message as is
+          errorMessage = error.message || "Login failed";
+        }
+        
+        alert("Login failed: " + errorMessage);    
+      });
+    });
+   </script>
+ </body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Libertinus+Math&display=swap" rel="stylesheet">
+  <title>Simple Login Page</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #3d6db8 50%, #4a7bc8 75%, #5a8fd8 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 0;
+    }
+
+    .logo {
+      width: 100px;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    }
+    .login-style{
+       font-family: "Libertinus Math", system-ui;
+       font-weight: 400;
+       font-style: normal;
+       font-size: 40px;
+       letter-spacing: 3px;
+    }
+
+    .login-container {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.05),
+        0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #1a1a2e;
+      font-size: 28px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .input-group {
+      position: relative;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      font-size: 15px;
+      font-weight: 400;
+      color: #1a1a2e;
+      transition: all 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 12px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+
+    button {
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Enhanced focus visibility for accessibility */
+    input:focus-visible, select:focus-visible, button:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+      body {
+        padding: 15px 0;
+      }
+      
+      .login-container {
+        margin: 0 15px;
+        padding: 30px 20px;
+        max-width: calc(100% - 30px);
+      }
+      
+      h2 {
+        font-size: 24px;
+        margin-bottom: 25px;
+      }
+      
+      .logo {
+        width: 80px;
+        height: 70px;
+        margin-bottom: 20px;
+      }
+      
+      form {
+        gap: 18px;
+      }
+      
+      input, select {
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+      
+      button {
+        padding: 12px 18px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-height: 600px) {
+      .logo {
+        width: 70px;
+        height: 60px;
+        margin-bottom: 15px;
+      }
+      
+      .login-container {
+        padding: 25px;
+      }
+      
+      h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      
+      form {
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <img src="images/mmw_logo.png" alt="Logo" class="logo" />
+    <h2 class="login-style">Login</h2>
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="usertype">User Type</label>
+        <select id="usertype" name="usertype" required>
+          <option value="">Select</option>
+          <option value="admin">Admin</option>
+          <option value="employee">Employee</option>
+          <option value="public">Public</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="userid">ID</label>
+        <input type="text" id="userid" name="id" required />
+      </div>
+
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const data = {
+        usertype: document.getElementById("usertype").value,
+        id: document.getElementById("userid").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+      };
+
+      fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (!response.ok) { 
+          return response.text().then(text => { 
+            throw new Error(text || 'Login failed'); 
+          });
+        }
+        return response.json();
+      })
+      .then(result => {
+        console.log('Login result:', result);
+        
+        // Store session data based on user type
+        if (result.usertype === "admin") {
+          // Store admin data
+          sessionStorage.setItem("adminId", result.id);
+          sessionStorage.setItem("adminEmail", result.email);
+          sessionStorage.setItem("usertype", result.usertype);
+          
+          alert(result.message || "Admin login successful");
+          window.location.href = "AdmDashboard.html";
+          
+        } else if (result.usertype === "public") {
+          // Store public user data — include all needed for session validation
+          sessionStorage.setItem("employeeId", result.id || "Pub01");
+          sessionStorage.setItem("employeeName", result.username || "Public User");
+          sessionStorage.setItem("department", "Public"); // 🔴 This is what was missing
+          sessionStorage.setItem("usertype", "public");
+          sessionStorage.setItem("email", result.email || "");
+
+          alert("Public access granted. Redirecting to Employee Attendance Page.");
+          window.location.href = "EmployeeAttendance.html";
+        }
+        else if (result.usertype === "employee") {
+          // Store employee data
+          sessionStorage.setItem("employeeId", result.id);
+          sessionStorage.setItem("employeeName", result.username);
+          sessionStorage.setItem("department", result.department);
+          sessionStorage.setItem("designation", result.designation);
+          sessionStorage.setItem("usertype", result.usertype);
+          sessionStorage.setItem("gender", result.gender);
+          sessionStorage.setItem("email", result.email);
+          
+          // Store profile image if available
+          if (result.profileImage) {
+            sessionStorage.setItem("profileImage", result.profileImage);
+          }
+          
+          alert("Employee login successful. Welcome " + (result.username || 'User'));
+          window.location.href = "EmployeePortal.html";
+          
+        } else {
+          // Fallback for any other user types
+          alert("Login successful. Welcome " + (result.username || 'User'));
+          window.location.href = "EmployeePortal.html";    
+        }
+      })
+      .catch(error => {
+        console.error("Login failed:", error);
+        let errorMessage = "Login failed";
+        
+        // Try to parse error message if it's JSON
+        try {
+          const errorObj = JSON.parse(error.message);
+          errorMessage = errorObj.error || errorObj.message || "Login failed";
+        } catch (e) {
+          // If not JSON, use the error message as is
+          errorMessage = error.message || "Login failed";
+        }
+        
+        alert("Login failed: " + errorMessage);    
+      });
+    });
+   </script>
+ </body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+        }
+
+        .dashboard-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .dashboard-button {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            padding: 30px 25px;
+            min-width: 160px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dashboard-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .dashboard-button.dashboard {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .dashboard-button.attendance-in {
+            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+            color: white;
+        }
+
+        .dashboard-button.attendance-out {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .dashboard-button.view-employee {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+
+        .button-icon {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+
+        .button-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            max-width: 800px;
+            width: 100%;
+            display: none;
+        }
+
+        .content-area.active {
+            display: block;
+        }
+
+        .content-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .content-header h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .attendance-card {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .attendance-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .attendance-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .attendance-button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .attendance-button.check-out {
+            background: #e53e3e;
+        }
+
+        .attendance-button.check-out:hover {
+            background: #c53030;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .employee-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #666;
+        }
+
+        .back-button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .dashboard-button {
+                min-width: 200px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Employee Portal</h1>
+        <p>Welcome to your workspace dashboard</p>
+    </div>
+
+    <div class="dashboard-container">
+        <button class="dashboard-button dashboard" onclick="showContent('dashboard')">
+            <div class="button-icon">📊</div>
+            <div class="button-text">Dashboard</div>
+        </button>
+
+        <button class="dashboard-button attendance-in" onclick="showContent('attendance-in')">
+            <div class="button-icon">🔓</div>
+            <div class="button-text">Attendance IN</div>
+        </button>
+
+        <button class="dashboard-button attendance-out" onclick="showContent('attendance-out')">
+            <div class="button-icon">🔒</div>
+            <div class="button-text">Attendance OUT</div>
+        </button>
+
+        <button class="dashboard-button view-employee" onclick="showContent('view-employee')">
+            <div class="button-icon">👤</div>
+            <div class="button-text">View Employee</div>
+        </button>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div id="dashboard-content" class="content-area">
+        <button class="back-button" onclick="hideContent()">← Back to Menu</button>
+        <div class="content-header">
+            <h2>Dashboard Overview</h2>
+            <p>Current Date: <span id="current-date"></span></p>
+            <p>Current Time: <span id="current-time"></span></p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">8</div>
+                <div class="stat-label">Hours Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">22</div>
+                <div class="stat-label">Days This Month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Pending Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">95%</div>
+                <div class="stat-label">Attendance Rate</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance In Content -->
+    <div id="attendance-in-content" class="content-area">
+        <button class="back-button" onclick="hideContent()">← Back to Menu</button>
+        <div class="content-header">
+            <h2>Attendance Check-In</h2>
+        </div>
+        
+        <div class="attendance-card">
+            <div class="attendance-icon">🔓</div>
+            <h3>Ready to Check In?</h3>
+            <p>Click the button below to record your arrival time</p>
+            <br>
+            <button class="attendance-button" onclick="checkIn()">Check In Now</button>
+            <div id="checkin-success" class="success-message">
+                <h4>Successfully Checked In!</h4>
+                <p>Check-in time: <span id="checkin-time"></span></p>
+                <p>Have a productive day!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Out Content -->
+    <div id="attendance-out-content" class="content-area">
+        <button class="back-button" onclick="hideContent()">← Back to Menu</button>
+        <div class="content-header">
+            <h2>Attendance Check-Out</h2>
+        </div>
+        
+        <div class="attendance-card">
+            <div class="attendance-icon">🔒</div>
+            <h3>Ready to Check Out?</h3>
+            <p>Click the button below to record your departure time</p>
+            <br>
+            <button class="attendance-button check-out" onclick="checkOut()">Check Out Now</button>
+            <div id="checkout-success" class="success-message">
+                <h4>Successfully Checked Out!</h4>
+                <p>Check-out time: <span id="checkout-time"></span></p>
+                <p>Thank you for your hard work today!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Employee Content -->
+    <div id="view-employee-content" class="content-area">
+        <button class="back-button" onclick="hideContent()">← Back to Menu</button>
+        <div class="content-header">
+            <h2>Employee Information</h2>
+        </div>
+        
+        <div class="employee-info">
+            <div class="info-item">
+                <div class="info-label">Employee ID</div>
+                <div class="info-value">EMP001</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Name</div>
+                <div class="info-value">John Doe</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Department</div>
+                <div class="info-value">Software Development</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Position</div>
+                <div class="info-value">Senior Developer</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Email</div>
+                <div class="info-value">john.doe@company.com</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Phone</div>
+                <div class="info-value">+1 (555) 123-4567</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Join Date</div>
+                <div class="info-value">2023-01-15</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Status</div>
+                <div class="info-value">Active</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update current time and date
+        function updateDateTime() {
+            const now = new Date();
+            const dateElement = document.getElementById('current-date');
+            const timeElement = document.getElementById('current-time');
+            
+            if (dateElement) {
+                dateElement.textContent = now.toLocaleDateString();
+            }
+            if (timeElement) {
+                timeElement.textContent = now.toLocaleTimeString();
+            }
+        }
+
+        // Show content section
+        function showContent(section) {
+            // Hide all content areas
+            const contentAreas = document.querySelectorAll('.content-area');
+            contentAreas.forEach(area => area.classList.remove('active'));
+            
+            // Show selected content
+            document.getElementById(section + '-content').classList.add('active');
+            
+            // Hide dashboard buttons
+            document.querySelector('.dashboard-container').style.display = 'none';
+            document.querySelector('.header').style.display = 'none';
+            
+            // Update time if dashboard is shown
+            if (section === 'dashboard') {
+                updateDateTime();
+                setInterval(updateDateTime, 1000);
+            }
+        }
+
+        // Hide content and show dashboard
+        function hideContent() {
+            const contentAreas = document.querySelectorAll('.content-area');
+            contentAreas.forEach(area => area.classList.remove('active'));
+            
+            document.querySelector('.dashboard-container').style.display = 'flex';
+            document.querySelector('.header').style.display = 'block';
+        }
+
+        // Check in function
+        function checkIn() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            
+            document.getElementById('checkin-time').textContent = timeString;
+            document.getElementById('checkin-success').style.display = 'block';
+        }
+
+        // Check out function
+        function checkOut() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            
+            document.getElementById('checkout-time').textContent = timeString;
+            document.getElementById('checkout-success').style.display = 'block';
+        }
+
+        // Initialize
+        updateDateTime();
+    </script>
+</body>
+</html>

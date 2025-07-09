@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+        }
+
+        .dashboard-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .dashboard-button {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            padding: 30px 25px;
+            min-width: 160px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dashboard-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .dashboard-button.dashboard {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .dashboard-button.attendance-in {
+            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+            color: white;
+        }
+
+        .dashboard-button.attendance-out {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .dashboard-button.view-employee {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+
+        .button-icon {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+
+        .button-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .dashboard-button {
+                min-width: 200px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Employee Portal</h1>
+        <p>Welcome to your workspace dashboard</p>
+    </div>
+
+    <div class="dashboard-container">
+        <a href="emDashboard.html" class="dashboard-button dashboard">
+            <div class="button-icon">📊</div>
+            <div class="button-text">Dashboard</div>
+        </a>
+
+        <!-- <a href="AttendanceIn.html" class="dashboard-button attendance-in">
+            <div class="button-icon">🔓</div>
+            <div class="button-text">Attendance IN</div>
+        </a>
+
+        <a href="AttendanceOut.html" class="dashboard-button attendance-out">
+            <div class="button-icon">🔒</div>
+            <div class="button-text">Attendance OUT</div>
+        </a> -->
+
+        <a href="specificEmployee.html" class="dashboard-button view-employee">
+            <div class="button-icon">👤</div>
+            <div class="button-text">View Employee</div>
+        </a>
+    </div>
+</body>
+</html>
