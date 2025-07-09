@@ -777,7 +777,7 @@
 const sessionCheck = validateSession();
 if (!sessionCheck.isValid) {
   alert("Employee session not found. Please login again.");
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
 
 
@@ -817,7 +817,7 @@ const API_BASE_URL = 'http://localhost:8080';
 // Initialize
 if (!employeeId || !employeeName || !department) {
     alert("Employee session not found. Please login again.");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 } else {
     if (usertype === "public") {
         employeeFaceImage.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjI1IiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0zMCAxMjBDMzAgMTAwIDUwIDkwIDc1IDkwQzEwMCA5MCA4MjAgMTAwIDEyMCAxMjBWMTUwSDMwVjEyMFoiIGZpbGw9IiNDQ0MiLz4KPC9zdmc+";
@@ -1331,12 +1331,12 @@ try {
     const sessionCheck = validateSession();
     if (!sessionCheck.isValid) {
         alert("Employee session not found. Please login again.");
-        window.location.href = "login.html";
+        window.location.href = "index.html";
     }
 } catch (error) {
     console.error('Session validation error:', error);
     alert("Session validation failed. Please login again.");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
 
 // Validate Permission timing

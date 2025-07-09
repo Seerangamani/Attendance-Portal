@@ -438,7 +438,7 @@
    const sessionCheck = validateSession();
 if (!sessionCheck.isValid) {
   alert("Employee session not found. Please login again.");
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
 
 
@@ -484,7 +484,7 @@ const API_BASE_URL = 'http://localhost:8080';
 
 if (!employeeId || !employeeName || !department) {
     alert("Employee session not found. Please login again.");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 } else {
     if (usertype === "public") {
         employeeFaceImage.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjI1IiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0zMCAxMjBDMzAgMTAwIDUwIDkwIDc1IDkwQzEwMCA5MCA4MjAgMTAwIDEyMCAxMjBWMTUwSDMwVjEyMFoiIGZpbGw9IiNDQ0MiLz4KPC9zdmc+";
@@ -1045,7 +1045,7 @@ async function captureAndProcessAttendance() {
 
 // Helper functions for session handling
 function redirectToLogin() {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
 
 function retryWithCurrentSession() {
@@ -1092,7 +1092,7 @@ function initializePage() {
         document.getElementById('error-details').innerHTML = `
             <div><strong>Session Error:</strong> Please login to continue</div>
             <div style="margin-top: 10px;">
-                <button onclick="window.location.href='login.html'" style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                <button onclick="window.location.href='index.html'" style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
                     Go to Login
                 </button>
                 <button onclick="checkSessionAgain()" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-left: 10px;">
@@ -1132,7 +1132,7 @@ if (!initialSessionCheck.isValid) {
             <div style="text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
                 <h3>Session Expired</h3>
                 <p>Please login again to continue</p>
-                <button onclick="window.location.href='login.html'" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                <button onclick="window.location.href='index.html'" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
                     Go to Login
                 </button>
             </div>
