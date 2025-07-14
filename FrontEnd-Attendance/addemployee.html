@@ -474,11 +474,11 @@
         </div> -->
         <div class="signup-section">
             <h2>ADD USER</h2>
-            <form id="signupForm">
+            <form id="signupForm" enctype="multipart/form-data">
                 <div class="form-row">
                     <div class="input-group">
                         <label for="userType">User Type</label>
-                        <select id="userType" required>
+                        <select id="userType" name="usertype" required>
                             <option value="" disabled selected>Select User Type</option>
                             <option value="Office">Office</option>
                             <option value="Production">Production</option>
@@ -487,7 +487,7 @@
                     
                     <div class="input-group">
                         <label for="department">Department</label>
-                        <select id="department" required>
+                        <select id="department" name="department" required>
                             <option value="" disabled selected>Select Department</option>
                             <option value="manager">Manager</option>
                             <option value="software">Software</option>
@@ -501,7 +501,7 @@
                     
                     <div class="input-group">
                         <label for="designation">Designation</label>
-                        <select id="designation" required>
+                        <select id="designation" name="designation" required>
                             <option value="" disabled selected>Select Designation</option>
                             <option value="teamleader">Team Leader</option>
                             <option value="frontend">Front End</option>
@@ -520,17 +520,17 @@
                 <div class="form-row">
                     <div class="input-group">
                         <label for="empid">Employee ID</label>
-                        <input type="text" id="empid" placeholder="Enter Employee ID" required>
+                        <input type="text" id="empid" name="id" required>
                     </div>
                     
                     <div class="input-group">
                         <label for="username">Username</label>
-                        <input type="text" id="username" placeholder="Enter Username" required>
+                        <input type="text" id="username" name="username" required>
                     </div>
                     
                     <div class="input-group">
                         <label for="gender">Gender</label>
-                        <select id="gender" required>
+                        <select id="gender" name="gender" required>
                             <option value="" disabled selected>Select Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -541,24 +541,24 @@
                 <div class="form-row">
                     <div class="input-group">
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" placeholder="Enter Email Address" required>
+                        <input type="email" id="email" name="email" required>
                     </div>
                     
                     <div class="input-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="Enter Password" required>
+                        <input type="password" id="password" name="password" required>
                     </div>
                     
                     <div class="input-group">
                         <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="input-group">
                         <label for="profileImage">Profile Image</label>
-                        <input type="file" id="profileImage" accept=".jpg,.jpeg" required>
+                        <input type="file" id="profileImage" name="profileImage" accept=".jpg,.jpeg" required>
                         <div class="file-upload-info">Only JPG files are allowed</div>
                     </div>
                 </div>
@@ -598,7 +598,7 @@ document.getElementById("signupForm").addEventListener("submit", function (event
   // Don't need to send confirmPassword to backend, frontend already validated
   formData.append("profileImage", profileImageInput.files[0]);
 
-  fetch("http://localhost:8080/api/employees/add", {
+  fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/employees/add", {
     method: "POST",
     body: formData,
   })

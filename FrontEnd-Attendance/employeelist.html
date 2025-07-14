@@ -451,7 +451,7 @@
       const table = document.getElementById('employeeStatusTable');
       const tbody = table.querySelector('tbody');
 
-      fetch("http://localhost:8080/api/attendance/today-status")
+      fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/today-status")
         .then(res => res.json())
         .then(data => {
           loadingIndicator.style.display = 'none';

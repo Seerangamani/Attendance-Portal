@@ -277,7 +277,7 @@ function updateDateTime() {
 }
 
 function fetchAttendanceData(employeeId) {
-  fetch(`http://localhost:8080/api/attendance/summary/${employeeId}`)
+  fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/summary/${employeeId}`)
     .then(response => response.json())
     .then(data => {
       document.getElementById('todayAttendance').textContent = data.todayStatus;

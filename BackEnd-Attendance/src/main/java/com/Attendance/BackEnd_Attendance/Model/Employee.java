@@ -20,7 +20,7 @@ public class Employee {
     private String password;
 
     @Lob
-    @Column(name = "profile_image", columnDefinition = "MEDIUMBLOB")
+    @Column(name = "profile_image")
     private byte[] profileImage;
 
     // Default constructor

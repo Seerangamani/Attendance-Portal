@@ -974,7 +974,7 @@ async function handlePublicCheckout(base64Image) {
         const apiAttempts = [
             // Original checkout endpoint
             {
-                url: 'http://localhost:8080/api/face-recognition/process-checkout',
+                url: 'https://maxmocattendance-50029336824.development.catalystappsail.in/api/face-recognition/process-checkout',
                 payload: { 
                     employeeId: "public",
                     liveImage: base64Image,
@@ -983,7 +983,7 @@ async function handlePublicCheckout(base64Image) {
             },
             // Alternative checkout endpoint
             {
-                url: 'http://localhost:8080/api/face-recognition/checkout',
+                url: 'https://maxmocattendance-50029336824.development.catalystappsail.in/api/face-recognition/checkout',
                 payload: { 
                     employeeId: "public",
                     liveImage: base64Image,
@@ -992,7 +992,7 @@ async function handlePublicCheckout(base64Image) {
             },
             // Generic face recognition endpoint with checkout action
             {
-                url: 'http://localhost:8080/api/face-recognition/recognize',
+                url: 'https://maxmocattendance-50029336824.development.catalystappsail.in/api/face-recognition/recognize',
                 payload: { 
                     employeeId: "public",
                     liveImage: base64Image,
@@ -1002,7 +1002,7 @@ async function handlePublicCheckout(base64Image) {
             },
             // Same endpoint as check-in but with different action
             {
-                url: 'http://localhost:8080/api/face-recognition/process-checkin',
+                url: 'https://maxmocattendance-50029336824.development.catalystappsail.in/api/face-recognition/process-checkin',
                 payload: { 
                     employeeId: "public",
                     liveImage: base64Image,
@@ -1011,7 +1011,7 @@ async function handlePublicCheckout(base64Image) {
             },
             // Generic attendance endpoint
             {
-                url: 'http://localhost:8080/api/attendance/face-recognition',
+                url: 'https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/face-recognition',
                 payload: { 
                     employeeId: "public",
                     image: base64Image,

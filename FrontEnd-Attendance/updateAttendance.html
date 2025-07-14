@@ -632,7 +632,7 @@ function fetchPermissionStatus(employeeId, date, forceRefresh = false) {
     // Add timestamp to prevent caching issues
     const timestamp = forceRefresh ? `?_t=${Date.now()}` : '';
     
-    fetch(`http://localhost:8080/api/attendance/permission-status/${employeeId}/${yearMonth}${timestamp}`)
+    fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/permission-status/${employeeId}/${yearMonth}${timestamp}`)
         .then(response => {
             if (response.ok) {
                 return response.json();
@@ -999,7 +999,7 @@ function fetchEmployeeDetails() {
     nameField.value = "Loading...";
     nameField.disabled = true;
 
-    fetch(`http://localhost:8080/api/attendance/employee/${employeeId}`)
+    fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/employee/${employeeId}`)
         .then(response => {
             if (response.ok) {
                 return response.json();
@@ -1142,7 +1142,7 @@ function validatePermissionRequest() {
 
 // Function to check employee status before allowing permission/half day
 function checkEmployeeStatus(employeeId, date, newStatus) {
-    return fetch(`http://localhost:8080/api/attendance/check-status/${employeeId}/${date}`)
+    return fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/check-status/${employeeId}/${date}`)
         .then(response => {
             if (response.ok) {
                 return response.json();
@@ -1356,7 +1356,7 @@ function handleHolidaySubmission(date, reason, submitButton, originalText) {
 
     console.log("Sending holiday data:", holidayData);
 
-    fetch("http://localhost:8080/api/attendance/mark-holiday", {
+    fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/mark-holiday", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -1413,7 +1413,7 @@ function handleHolidaySubmission(date, reason, submitButton, originalText) {
 
 // Updated displayCurrentStatus function to show complete attendance info
 function displayCurrentStatus(employeeId, date) {
-    fetch(`http://localhost:8080/api/attendance/check-status/${employeeId}/${date}`)
+    fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/check-status/${employeeId}/${date}`)
         .then(response => {
             if (response.ok) {
                 return response.json();
@@ -1595,7 +1595,7 @@ function handleIndividualEmployeeSubmission(employeeId, date, statusValue, reaso
                 attendanceData.allowOverride = statusInfo.allowOverride;
             }
 
-            return fetch("http://localhost:8080/api/attendance/update-status", {
+            return fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/update-status", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

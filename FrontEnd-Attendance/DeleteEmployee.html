@@ -373,7 +373,7 @@
 
     // 🔄 Fetch all employees
     function fetchEmployees() {
-      fetch("http://localhost:8080/api/employees")
+      fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/employees")
         .then(res => res.json())
         .then(data => {
           employees = data;
@@ -434,7 +434,7 @@
     function deleteEmployee(empId) {
       if (!confirm("Are you sure you want to delete this employee?")) return;
 
-      fetch(`http://localhost:8080/api/employees/${empId}`, {
+      fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/employees/${empId}`, {
         method: 'DELETE'
       })
         .then(response => {

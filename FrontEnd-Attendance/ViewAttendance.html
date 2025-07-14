@@ -824,7 +824,7 @@
     let selectedEmployeeCard = null;
 
     async function fetchEmployees() {
-      const res = await fetch('http://localhost:8080/api/view-attendance/today');
+      const res = await fetch('https://maxmocattendance-50029336824.development.catalystappsail.in/api/view-attendance/today');
       const data = await res.json();
       employees = data;
       showEmployees(data);
@@ -883,7 +883,7 @@
       document.getElementById("empDesigDetail").textContent = emp.designation;
       document.getElementById("empStatusDetail").innerHTML = `<span class="status ${getStatusClass(emp.status)}">${emp.status.toUpperCase()}</span>`;
 
-      const res = await fetch(`http://localhost:8080/api/view-attendance/overall-percentage?id=${emp.id}`);
+      const res = await fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/view-attendance/overall-percentage?id=${emp.id}`);
       const data = await res.json();
       document.getElementById("empOverallPercentage").textContent = data.percentage + "%";
     }
@@ -919,7 +919,7 @@
           alert("Please select From and To dates");
           return;
         }
-        url = `http://localhost:8080/api/view-attendance/filter/with-status-counts?id=${selected}&fromDate=${from}&toDate=${to}`;
+        url = `https://maxmocattendance-50029336824.development.catalystappsail.in/api/view-attendance/filter/with-status-counts?id=${selected}&fromDate=${from}&toDate=${to}`;
       } else if (filterType === "month") {
         const monthInput = document.getElementById("monthDate").value;
         if (!monthInput) {
@@ -928,9 +928,9 @@
         }
         const from = `${monthInput}-01`;
         const to = new Date(new Date(from).getFullYear(), new Date(from).getMonth() + 1, 0).toISOString().split("T")[0];
-        url = `http://localhost:8080/api/view-attendance/filter/with-status-counts?id=${selected}&fromDate=${from}&toDate=${to}`;
+        url = `https://maxmocattendance-50029336824.development.catalystappsail.in/api/view-attendance/filter/with-status-counts?id=${selected}&fromDate=${from}&toDate=${to}`;
       } else {
-        url = `http://localhost:8080/api/view-attendance/filter/with-status-counts?id=${selected}`;
+        url = `https://maxmocattendance-50029336824.development.catalystappsail.in/api/view-attendance/filter/with-status-counts?id=${selected}`;
       }
 
       const res = await fetch(url);

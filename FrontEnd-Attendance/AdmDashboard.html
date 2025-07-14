@@ -578,7 +578,7 @@
       const today = new Date().toLocaleDateString();
       document.getElementById("today-date").textContent = `Today's Overview - ${today}`;
 
-      fetch("http://localhost:8080/api/attendance/dashboard-stats")
+      fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/dashboard-stats")
         .then(res => res.json())
         .then(data => {
           document.getElementById("totalEmployees").textContent = data.totalEmployees;

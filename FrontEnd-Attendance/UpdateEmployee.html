@@ -505,7 +505,7 @@
     const tbody = document.getElementById('employee-table-body');
     tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading employees...</td></tr>';
 
-    fetch("http://localhost:8080/api/employees")
+    fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/employees")
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -520,7 +520,7 @@
         }
 
         data.forEach(emp => {
-          fetch(`http://localhost:8080/api/employees/face-image/${emp.id}`)
+          fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/employees/face-image/${emp.id}`)
             .then(imgRes => {
               if (imgRes.ok) {
                 return imgRes.json();
@@ -583,7 +583,7 @@
     document.getElementById('modal-password').value = emp.password || "";
 
     // Load current profile image
-    fetch(`http://localhost:8080/api/employees/face-image/${emp.id}`)
+    fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/employees/face-image/${emp.id}`)
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -669,7 +669,7 @@
       console.log(key + ': ' + (value instanceof File ? `File: ${value.name} (${value.size} bytes)` : value));
     }
 
-    fetch(`http://localhost:8080/api/employees/update/${id}`, {
+    fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/employees/update/${id}`, {
       method: "PUT",
       body: formData
     })

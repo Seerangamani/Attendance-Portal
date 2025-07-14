@@ -1,15 +1,49 @@
-// EmployeeDTO.java
 package com.Attendance.BackEnd_Attendance.Model;
 
 public class EmployeeDTO {
     private String id;
-    private String username;
-    private String email;
+    private String usertype;
     private String department;
     private String designation;
-    private String profileImage;
+    private String username;
+    private String gender;
+    private String email;
+    private String password;
+    private String profileImageBase64; // For API response
 
-    public EmployeeDTO(String id, String username, String email, String department, String designation, String gender, String employee, String s) {
+    // Default constructor
+    public EmployeeDTO() {
+    }
+
+    // Constructor from Employee entity
+    public EmployeeDTO(String id, String usertype, String department, String designation,
+                       String username, String gender, String email, String password, String profileImageBase64) {
+        this.id = id;
+        this.usertype = usertype;
+        this.department = department;
+        this.designation = designation;
+        this.username = username;
+        this.gender = gender;
+        this.email = email;
+        this.password = password;
+        this.profileImageBase64 = profileImageBase64;
+    }
+
+    // Getters and Setters
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUsertype() {
+        return usertype;
+    }
+
+    public void setUsertype(String usertype) {
+        this.usertype = usertype;
     }
 
     public String getDepartment() {
@@ -28,30 +62,6 @@ public class EmployeeDTO {
         this.designation = designation;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -60,13 +70,35 @@ public class EmployeeDTO {
         this.username = username;
     }
 
-    public EmployeeDTO(String department, String designation, String email, String id, String profileImage, String username) {
-        this.department = department;
-        this.designation = designation;
-        this.email = email;
-        this.id = id;
-        this.profileImage = profileImage;
-        this.username = username;
+    public String getGender() {
+        return gender;
     }
 
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getProfileImageBase64() {
+        return profileImageBase64;
+    }
+
+    public void setProfileImageBase64(String profileImageBase64) {
+        this.profileImageBase64 = profileImageBase64;
+    }
 }

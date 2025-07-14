@@ -642,13 +642,13 @@
 
         async function loadEmployeeData() {
             try {
-                const response = await fetch(`http://localhost:8080/api/employee/${employeeId}`);
+                const response = await fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/employee/${employeeId}`);
                 if (response.ok) {
                     const employee = await response.json();
                     currentEmployeeData = employee;
                     
                     try {
-                        const faceResponse = await fetch(`http://localhost:8080/api/employee/face-image/${employeeId}`);
+                        const faceResponse = await fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/employee/face-image/${employeeId}`);
                         if (faceResponse.ok) {
                             const data = await faceResponse.json();
                             employeeFaceImage.src = `data:image/jpeg;base64,${data.base64Image}`;
@@ -787,7 +787,7 @@
         const now = new Date();
 
         // First, perform face recognition
-        const faceResponse = await fetch('http://localhost:8080/api/face-recognition', {
+        const faceResponse = await fetch('https://maxmocattendance-50029336824.development.catalystappsail.in/api/face-recognition', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -813,7 +813,7 @@
             targetEmployeeId = faceResult.employee.id;
             matchedEmployee = faceResult.employee;
             
-            const empResponse = await fetch(`http://localhost:8080/api/employee/${targetEmployeeId}`);
+            const empResponse = await fetch(`https://maxmocattendance-50029336824.development.catalystappsail.in/api/employee/${targetEmployeeId}`);
             if (empResponse.ok) {
                 targetEmployee = await empResponse.json();
                 displayTimingInfo(targetEmployee);
@@ -853,7 +853,7 @@
 
 async function processPermission(empId, timestamp) {
     try {
-        const response = await fetch('http://localhost:8080/api/attendance/permission', {
+        const response = await fetch('https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/permission', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -875,7 +875,7 @@ async function processPermission(empId, timestamp) {
 
 async function processHalfDay(empId, timestamp) {
     try {
-        const response = await fetch('http://localhost:8080/api/attendance/halfday', {
+        const response = await fetch('https://maxmocattendance-50029336824.development.catalystappsail.in/api/attendance/halfday', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

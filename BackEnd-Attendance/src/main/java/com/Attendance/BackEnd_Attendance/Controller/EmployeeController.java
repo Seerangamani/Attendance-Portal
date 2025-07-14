@@ -1,5 +1,6 @@
 package com.Attendance.BackEnd_Attendance.Controller;
 
+import com.Attendance.BackEnd_Attendance.Model.EmployeeDTO;
 import com.Attendance.BackEnd_Attendance.Model.Employee;
 import com.Attendance.BackEnd_Attendance.Repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -101,16 +103,22 @@ public class EmployeeController {
 
     @GetMapping
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+    public List<EmployeeDTO> getAllEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
+        System.out.println("Total employees found: " + employees.size());
+
+        return employees.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable String id) {
-        return employeeRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable String id) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if (employee.isPresent()) {
+            return ResponseEntity.ok(convertToDTO(employee.get()));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -152,5 +160,25 @@ public class EmployeeController {
                     return new ResponseEntity<>(employee.getProfileImage(), headers, HttpStatus.OK);
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Helper method to convert Employee to EmployeeDTO
+    private EmployeeDTO convertToDTO(Employee employee) {
+        String base64Image = null;
+        if (employee.getProfileImage() != null && employee.getProfileImage().length > 0) {
+            base64Image = Base64.getEncoder().encodeToString(employee.getProfileImage());
+        }
+
+        return new EmployeeDTO(
+                employee.getId(),
+                employee.getUsertype(),
+                employee.getDepartment(),
+                employee.getDesignation(),
+                employee.getUsername(),
+                employee.getGender(),
+                employee.getEmail(),
+                employee.getPassword(),
+                base64Image
+        );
     }
 }
