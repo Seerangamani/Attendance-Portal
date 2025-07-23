@@ -31,11 +31,13 @@ public class SecurityConfig {
         // Explicitly allow frontend origins
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://127.0.0.1:5500",
-                "http://127.0.0.1:5501",  // Added this
+                "http://127.0.0.1:5501",
                 "http://localhost:5500",
-                "http://localhost:5501",   // Added this
-                "http://localhost:3000"
+                "http://localhost:5501",
+                "http://localhost:3000",
+                "https://attendance-portal-gilt.vercel.app" // ✅ Add your Vercel frontend here
         ));
+
 
         // Allowed methods
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
