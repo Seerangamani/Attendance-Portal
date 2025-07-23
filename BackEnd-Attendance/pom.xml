@@ -20,7 +20,9 @@
 
 	<properties>
 		<java.version>17</java.version> <!-- Changed from 23 to 17 -->
+		<mysql.version>8.3.0</mysql.version> <!-- ✅ Add this line -->
 	</properties>
+
 
 	<dependencies>
 		<!-- Spring Web & JPA -->
@@ -40,12 +42,12 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
-		<!-- MySQL Connector -->
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
 
 		<!-- Lombok -->
 		<dependency>
