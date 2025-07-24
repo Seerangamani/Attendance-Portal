@@ -250,12 +250,15 @@
         email: document.getElementById("email").value,
         password: document.getElementById("password").value
       };
-
       fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      })
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });  
       .then(response => {
         if (!response.ok) { 
           return response.text().then(text => { 
