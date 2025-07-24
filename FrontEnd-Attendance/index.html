@@ -250,86 +250,75 @@
         email: document.getElementById("email").value,
         password: document.getElementById("password").value
       };
-      fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/login", {
+    fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/login", {
   method: "POST",
   credentials: "include",
   headers: {
     "Content-Type": "application/json"
   },
   body: JSON.stringify(data)
+})
+.then(response => {
+  if (!response.ok) {
+    return response.text().then(text => {
+      throw new Error(text || 'Login failed');
+    });
+  }
+  return response.json();
+})
+.then(result => {
+  console.log('Login result:', result);
+
+  if (result.usertype === "admin") {
+    sessionStorage.setItem("adminId", result.id);
+    sessionStorage.setItem("adminEmail", result.email);
+    sessionStorage.setItem("usertype", result.usertype);
+    alert(result.message || "Admin login successful");
+    window.location.href = "AdmDashboard.html";
+    
+  } else if (result.usertype === "public") {
+    sessionStorage.setItem("employeeId", result.id || "Pub01");
+    sessionStorage.setItem("employeeName", result.username || "Public User");
+    sessionStorage.setItem("department", "Public");
+    sessionStorage.setItem("usertype", "public");
+    sessionStorage.setItem("email", result.email || "");
+    alert("Public access granted. Redirecting to Employee Attendance Page.");
+    window.location.href = "EmployeeAttendance.html";
+
+  } else if (result.usertype === "employee") {
+    sessionStorage.setItem("employeeId", result.id);
+    sessionStorage.setItem("employeeName", result.username);
+    sessionStorage.setItem("department", result.department);
+    sessionStorage.setItem("designation", result.designation);
+    sessionStorage.setItem("usertype", result.usertype);
+    sessionStorage.setItem("gender", result.gender);
+    sessionStorage.setItem("email", result.email);
+
+    if (result.profileImage) {
+      sessionStorage.setItem("profileImage", result.profileImage);
+    }
+
+    alert("Employee login successful. Welcome " + (result.username || 'User'));
+    window.location.href = "EmployeePortal.html";
+
+  } else {
+    alert("Login successful. Welcome " + (result.username || 'User'));
+    window.location.href = "EmployeePortal.html";    
+  }
+})
+.catch(error => {
+  console.error("Login failed:", error);
+  let errorMessage = "Login failed";
+
+  try {
+    const errorObj = JSON.parse(error.message);
+    errorMessage = errorObj.error || errorObj.message || "Login failed";
+  } catch (e) {
+    errorMessage = error.message || "Login failed";
+  }
+
+  alert("Login failed: " + errorMessage);    
 });
-
-      .then(response => {
-        if (!response.ok) { 
-          return response.text().then(text => { 
-            throw new Error(text || 'Login failed'); 
-          });
-        }
-        return response.json();
-      })
-      .then(result => {
-        console.log('Login result:', result);
-        
-        // Store session data based on user type
-        if (result.usertype === "admin") {
-          // Store admin data
-          sessionStorage.setItem("adminId", result.id);
-          sessionStorage.setItem("adminEmail", result.email);
-          sessionStorage.setItem("usertype", result.usertype);
-          
-          alert(result.message || "Admin login successful");
-          window.location.href = "AdmDashboard.html";
-          
-        } else if (result.usertype === "public") {
-          // Store public user data — include all needed for session validation
-          sessionStorage.setItem("employeeId", result.id || "Pub01");
-          sessionStorage.setItem("employeeName", result.username || "Public User");
-          sessionStorage.setItem("department", "Public"); // 🔴 This is what was missing
-          sessionStorage.setItem("usertype", "public");
-          sessionStorage.setItem("email", result.email || "");
-
-          alert("Public access granted. Redirecting to Employee Attendance Page.");
-          window.location.href = "EmployeeAttendance.html";
-        }
-        else if (result.usertype === "employee") {
-          // Store employee data
-          sessionStorage.setItem("employeeId", result.id);
-          sessionStorage.setItem("employeeName", result.username);
-          sessionStorage.setItem("department", result.department);
-          sessionStorage.setItem("designation", result.designation);
-          sessionStorage.setItem("usertype", result.usertype);
-          sessionStorage.setItem("gender", result.gender);
-          sessionStorage.setItem("email", result.email);
-          
-          // Store profile image if available
-          if (result.profileImage) {
-            sessionStorage.setItem("profileImage", result.profileImage);
-          }
-          
-          alert("Employee login successful. Welcome " + (result.username || 'User'));
-          window.location.href = "EmployeePortal.html";
-          
-        } else {
-          // Fallback for any other user types
-          alert("Login successful. Welcome " + (result.username || 'User'));
-          window.location.href = "EmployeePortal.html";    
-        }
-      })
-      .catch(error => {
-        console.error("Login failed:", error);
-        let errorMessage = "Login failed";
-        
-        // Try to parse error message if it's JSON
-        try {
-          const errorObj = JSON.parse(error.message);
-          errorMessage = errorObj.error || errorObj.message || "Login failed";
-        } catch (e) {
-          // If not JSON, use the error message as is
-          errorMessage = error.message || "Login failed";
-        }
-        
-        alert("Login failed: " + errorMessage);    
-      });
     });
    </script>
  </body>
