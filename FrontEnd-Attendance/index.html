@@ -239,9 +239,58 @@
       <button type="submit">Login</button>
     </form>
   </div>
+<script>
+// Try these URLs in order to find the correct Zoho Catalyst endpoint
+const API_URLS = [
+  "https://maxmocattendance-50029336824.development.catalystappsail.in/server/maxmocattendance_function/api/login",
+  "https://maxmocattendance-50029336824.development.catalystappsail.in/api/login",
+  "https://maxmocattendance-50029336824.development.catalystappsail.in/login"
+];
 
-  <script>
-  document.getElementById("loginForm").addEventListener("submit", function(event) {
+async function attemptLogin(data) {
+  for (let i = 0; i < API_URLS.length; i++) {
+    try {
+      console.log(`Trying URL ${i + 1}: ${API_URLS[i]}`);
+      
+      const response = await fetch(API_URLS[i], {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+
+      console.log(`Response from URL ${i + 1}:`, response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Login successful with URL:', API_URLS[i]);
+        return result;
+      } else if (response.status === 404) {
+        console.log(`❌ URL ${i + 1} returned 404, trying next...`);
+        continue;
+      } else {
+        const errorText = await response.text();
+        console.log(`❌ URL ${i + 1} error:`, response.status, errorText);
+        if (i === API_URLS.length - 1) {
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        continue;
+      }
+      
+    } catch (error) {
+      console.log(`❌ URL ${i + 1} failed:`, error.message);
+      
+      if (i === API_URLS.length - 1) {
+        throw new Error(`All URLs failed. Last error: ${error.message}`);
+      }
+    }
+  }
+}
+
+document.getElementById("loginForm").addEventListener("submit", function(event) {
   event.preventDefault();
 
   const data = {
@@ -257,114 +306,71 @@
   submitButton.textContent = 'Logging in...';
   submitButton.disabled = true;
 
-  console.log('Sending login request:', data);
+  console.log('🚀 Sending login request:', data);
 
-  // Fixed API URL - removed extra /api since your service might be configured differently
-  const API_BASE_URL = "https://maxmocattendance-50029336824.development.catalystappsail.in";
-  
-  fetch(`${API_BASE_URL}/api/login`, {
-    method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    credentials: 'include',
-    body: JSON.stringify(data)
-  })
-  .then(response => {
-    console.log('Response status:', response.status);
-    console.log('Response headers:', Object.fromEntries(response.headers));
-    
-    // Check if service is running
-    if (response.status === 503 || response.status === 502) {
-      throw new Error("Backend service is not running. Please start your Zoho Catalyst service.");
-    }
-    
-    if (!response.ok) { 
-      return response.text().then(text => {
-        console.error('Error response body:', text);
-        let errorMessage;
-        try {
-          const errorObj = JSON.parse(text);
-          errorMessage = errorObj.error || errorObj.message || 'Login failed';
-        } catch (e) {
-          errorMessage = text || `HTTP ${response.status}: ${response.statusText}`;
+  // Use the attemptLogin function instead of direct fetch
+  attemptLogin(data)
+    .then(result => {
+      console.log('✅ Login result:', result);
+      
+      // Store session data based on user type
+      if (result.usertype === "admin") {
+        sessionStorage.setItem("adminId", result.id);
+        sessionStorage.setItem("adminEmail", result.email);
+        sessionStorage.setItem("usertype", result.usertype);
+        
+        alert(result.message || "Admin login successful");
+        window.location.href = "AdmDashboard.html";
+        
+      } else if (result.usertype === "public") {
+        sessionStorage.setItem("employeeId", result.id || "Pub01");
+        sessionStorage.setItem("employeeName", result.username || "Public User");
+        sessionStorage.setItem("department", "Public");
+        sessionStorage.setItem("usertype", "public");
+        sessionStorage.setItem("email", result.email || "");
+
+        alert("Public access granted. Redirecting to Employee Attendance Page.");
+        window.location.href = "EmployeeAttendance.html";
+      }
+      else if (result.usertype === "employee") {
+        sessionStorage.setItem("employeeId", result.id);
+        sessionStorage.setItem("employeeName", result.username);
+        sessionStorage.setItem("department", result.department);
+        sessionStorage.setItem("designation", result.designation);
+        sessionStorage.setItem("usertype", result.usertype);
+        sessionStorage.setItem("gender", result.gender);
+        sessionStorage.setItem("email", result.email);
+        
+        if (result.profileImage) {
+          sessionStorage.setItem("profileImage", result.profileImage);
         }
-        throw new Error(errorMessage);
-      });
-    }
-    return response.json();
-  })
-  .then(result => {
-    console.log('Login result:', result);
-    
-    // Store session data based on user type
-    if (result.usertype === "admin") {
-      sessionStorage.setItem("adminId", result.id);
-      sessionStorage.setItem("adminEmail", result.email);
-      sessionStorage.setItem("usertype", result.usertype);
+        
+        alert("Employee login successful. Welcome " + (result.username || 'User'));
+        window.location.href = "EmployeePortal.html";
+        
+      } else {
+        alert("Login successful. Welcome " + (result.username || 'User'));
+        window.location.href = "EmployeePortal.html";    
+      }
+    })
+    .catch(error => {
+      console.error("❌ Login failed:", error);
       
-      alert(result.message || "Admin login successful");
-      window.location.href = "AdmDashboard.html";
+      let errorMessage = "Login failed: " + error.message;
       
-    } else if (result.usertype === "public") {
-      sessionStorage.setItem("employeeId", result.id || "Pub01");
-      sessionStorage.setItem("employeeName", result.username || "Public User");
-      sessionStorage.setItem("department", "Public");
-      sessionStorage.setItem("usertype", "public");
-      sessionStorage.setItem("email", result.email || "");
-
-      alert("Public access granted. Redirecting to Employee Attendance Page.");
-      window.location.href = "EmployeeAttendance.html";
-    }
-    else if (result.usertype === "employee") {
-      sessionStorage.setItem("employeeId", result.id);
-      sessionStorage.setItem("employeeName", result.username);
-      sessionStorage.setItem("department", result.department);
-      sessionStorage.setItem("designation", result.designation);
-      sessionStorage.setItem("usertype", result.usertype);
-      sessionStorage.setItem("gender", result.gender);
-      sessionStorage.setItem("email", result.email);
-      
-      if (result.profileImage) {
-        sessionStorage.setItem("profileImage", result.profileImage);
+      if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
+        errorMessage = `🔗 Connection failed!\n\nPossible issues:\n1. Backend service not running\n2. Network connectivity\n3. CORS configuration\n4. Wrong API endpoint\n\nTechnical: ${error.message}`;
+      } else if (error.message.includes('All URLs failed')) {
+        errorMessage = `🎯 All API endpoints failed!\n\nChecked URLs:\n${API_URLS.map((url, i) => `${i+1}. ${url}`).join('\n')}\n\nCheck console for details.`;
       }
       
-      alert("Employee login successful. Welcome " + (result.username || 'User'));
-      window.location.href = "EmployeePortal.html";
-      
-    } else {
-      alert("Login successful. Welcome " + (result.username || 'User'));
-      window.location.href = "EmployeePortal.html";    
-    }
-  })
-  .catch(error => {
-    console.error("Login failed:", error);
-    
-    let errorMessage = "Login failed";
-    
-    if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
-      errorMessage = `Connection failed: 
-      
-1. Your backend service is not running on Zoho Catalyst
-2. Check your service status at: https://console.catalyst.zoho.in
-3. Make sure your Spring Boot app is deployed and running
-4. Verify your API endpoint URL
-
-Technical error: ${error.message}`;
-    } else if (error.message.includes('CORS')) {
-      errorMessage = "CORS error: Backend service configuration issue. Contact developer.";
-    } else {
-      errorMessage = "Login failed: " + error.message;
-    }
-    
-    alert(errorMessage);
-  })
-  .finally(() => {
-    submitButton.textContent = originalText;
-    submitButton.disabled = false;
-  });
+      alert(errorMessage);
+    })
+    .finally(() => {
+      submitButton.textContent = originalText;
+      submitButton.disabled = false;
+    });
 });
-   </script>
+</script>
  </body>
 </html>
