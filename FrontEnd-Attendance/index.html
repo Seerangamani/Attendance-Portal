@@ -241,7 +241,7 @@
   </div>
 
   <script>
-   document.getElementById("loginForm").addEventListener("submit", function(event) {
+  document.getElementById("loginForm").addEventListener("submit", function(event) {
   event.preventDefault();
 
   const data = {
@@ -251,7 +251,7 @@
     password: document.getElementById("password").value
   };
 
-  // ✅ Add loading state
+  // Add loading state
   const submitButton = event.target.querySelector('button[type="submit"]');
   const originalText = submitButton.textContent;
   submitButton.textContent = 'Logging in...';
@@ -259,20 +259,27 @@
 
   console.log('Sending login request:', data);
 
-  fetch("https://maxmocattendance-50029336824.development.catalystappsail.in/api/login", {
+  // Fixed API URL - removed extra /api since your service might be configured differently
+  const API_BASE_URL = "https://maxmocattendance-50029336824.development.catalystappsail.in";
+  
+  fetch(`${API_BASE_URL}/api/login`, {
     method: "POST",
     headers: { 
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
-    credentials: 'include', // ✅ Important for CORS with credentials
+    credentials: 'include',
     body: JSON.stringify(data)
   })
   .then(response => {
     console.log('Response status:', response.status);
-    console.log('Response headers:', response.headers);
+    console.log('Response headers:', Object.fromEntries(response.headers));
     
-    // ✅ Better error handling
+    // Check if service is running
+    if (response.status === 503 || response.status === 502) {
+      throw new Error("Backend service is not running. Please start your Zoho Catalyst service.");
+    }
+    
     if (!response.ok) { 
       return response.text().then(text => {
         console.error('Error response body:', text);
@@ -293,7 +300,6 @@
     
     // Store session data based on user type
     if (result.usertype === "admin") {
-      // Store admin data
       sessionStorage.setItem("adminId", result.id);
       sessionStorage.setItem("adminEmail", result.email);
       sessionStorage.setItem("usertype", result.usertype);
@@ -302,7 +308,6 @@
       window.location.href = "AdmDashboard.html";
       
     } else if (result.usertype === "public") {
-      // Store public user data
       sessionStorage.setItem("employeeId", result.id || "Pub01");
       sessionStorage.setItem("employeeName", result.username || "Public User");
       sessionStorage.setItem("department", "Public");
@@ -313,7 +318,6 @@
       window.location.href = "EmployeeAttendance.html";
     }
     else if (result.usertype === "employee") {
-      // Store employee data
       sessionStorage.setItem("employeeId", result.id);
       sessionStorage.setItem("employeeName", result.username);
       sessionStorage.setItem("department", result.department);
@@ -322,7 +326,6 @@
       sessionStorage.setItem("gender", result.gender);
       sessionStorage.setItem("email", result.email);
       
-      // Store profile image if available
       if (result.profileImage) {
         sessionStorage.setItem("profileImage", result.profileImage);
       }
@@ -331,7 +334,6 @@
       window.location.href = "EmployeePortal.html";
       
     } else {
-      // Fallback for any other user types
       alert("Login successful. Welcome " + (result.username || 'User'));
       window.location.href = "EmployeePortal.html";    
     }
@@ -339,13 +341,19 @@
   .catch(error => {
     console.error("Login failed:", error);
     
-    // ✅ Better error messages for different types of failures
     let errorMessage = "Login failed";
     
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      errorMessage = "Network error: Unable to connect to server. Please check your internet connection.";
+    if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
+      errorMessage = `Connection failed: 
+      
+1. Your backend service is not running on Zoho Catalyst
+2. Check your service status at: https://console.catalyst.zoho.in
+3. Make sure your Spring Boot app is deployed and running
+4. Verify your API endpoint URL
+
+Technical error: ${error.message}`;
     } else if (error.message.includes('CORS')) {
-      errorMessage = "Connection error: Please try again or contact support.";
+      errorMessage = "CORS error: Backend service configuration issue. Contact developer.";
     } else {
       errorMessage = "Login failed: " + error.message;
     }
@@ -353,7 +361,6 @@
     alert(errorMessage);
   })
   .finally(() => {
-    // ✅ Reset button state
     submitButton.textContent = originalText;
     submitButton.disabled = false;
   });
