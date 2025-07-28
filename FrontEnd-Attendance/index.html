@@ -240,56 +240,10 @@
     </form>
   </div>
 <script>
-// Try these URLs in order to find the correct Zoho Catalyst endpoint
-const API_URLS = [
-  "https://maxmocattendance-50029336824.development.catalystappsail.in/server/maxmocattendance_function/api/login",
-  "https://maxmocattendance-50029336824.development.catalystappsail.in/api/login",
-  "https://maxmocattendance-50029336824.development.catalystappsail.in/login"
-];
+// உங்க catalyst.json படி correct URL pattern:
+const CORRECT_API_URL = "https://maxmocattendance-50029336824.development.catalystappsail.in/server/maxmocattendance/api/login";
 
-async function attemptLogin(data) {
-  for (let i = 0; i < API_URLS.length; i++) {
-    try {
-      console.log(`Trying URL ${i + 1}: ${API_URLS[i]}`);
-      
-      const response = await fetch(API_URLS[i], {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        credentials: 'include',
-        body: JSON.stringify(data)
-      });
-
-      console.log(`Response from URL ${i + 1}:`, response.status);
-      
-      if (response.ok) {
-        const result = await response.json();
-        console.log('✅ Login successful with URL:', API_URLS[i]);
-        return result;
-      } else if (response.status === 404) {
-        console.log(`❌ URL ${i + 1} returned 404, trying next...`);
-        continue;
-      } else {
-        const errorText = await response.text();
-        console.log(`❌ URL ${i + 1} error:`, response.status, errorText);
-        if (i === API_URLS.length - 1) {
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-        continue;
-      }
-      
-    } catch (error) {
-      console.log(`❌ URL ${i + 1} failed:`, error.message);
-      
-      if (i === API_URLS.length - 1) {
-        throw new Error(`All URLs failed. Last error: ${error.message}`);
-      }
-    }
-  }
-}
-
+// Complete working script:
 document.getElementById("loginForm").addEventListener("submit", function(event) {
   event.preventDefault();
 
@@ -300,76 +254,94 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
     password: document.getElementById("password").value
   };
 
-  // Add loading state
   const submitButton = event.target.querySelector('button[type="submit"]');
   const originalText = submitButton.textContent;
   submitButton.textContent = 'Logging in...';
   submitButton.disabled = true;
 
-  console.log('🚀 Sending login request:', data);
+  console.log('🚀 Using correct Catalyst URL:', CORRECT_API_URL);
+  console.log('📤 Sending login data:', data);
 
-  // Use the attemptLogin function instead of direct fetch
-  attemptLogin(data)
-    .then(result => {
-      console.log('✅ Login result:', result);
+  fetch(CORRECT_API_URL, {
+    method: "POST",
+    headers: { 
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    mode: 'cors',
+    credentials: 'include',
+    body: JSON.stringify(data)
+  })
+  .then(response => {
+    console.log('📨 Response status:', response.status);
+    console.log('📨 Response OK:', response.ok);
+    
+    if (!response.ok) {
+      return response.text().then(text => {
+        console.error('❌ Error response body:', text);
+        throw new Error(`HTTP ${response.status}: ${text}`);
+      });
+    }
+    return response.json();
+  })
+  .then(result => {
+    console.log('✅ Login successful:', result);
+    
+    // Store session data based on user type
+    if (result.usertype === "admin") {
+      sessionStorage.setItem("adminId", result.id);
+      sessionStorage.setItem("adminEmail", result.email);
+      sessionStorage.setItem("usertype", result.usertype);
       
-      // Store session data based on user type
-      if (result.usertype === "admin") {
-        sessionStorage.setItem("adminId", result.id);
-        sessionStorage.setItem("adminEmail", result.email);
-        sessionStorage.setItem("usertype", result.usertype);
-        
-        alert(result.message || "Admin login successful");
-        window.location.href = "AdmDashboard.html";
-        
-      } else if (result.usertype === "public") {
-        sessionStorage.setItem("employeeId", result.id || "Pub01");
-        sessionStorage.setItem("employeeName", result.username || "Public User");
-        sessionStorage.setItem("department", "Public");
-        sessionStorage.setItem("usertype", "public");
-        sessionStorage.setItem("email", result.email || "");
+      alert(result.message || "Admin login successful");
+      window.location.href = "AdmDashboard.html";
+      
+    } else if (result.usertype === "public") {
+      sessionStorage.setItem("employeeId", result.id || "Pub01");
+      sessionStorage.setItem("employeeName", result.username || "Public User");
+      sessionStorage.setItem("department", "Public");
+      sessionStorage.setItem("usertype", "public");
+      sessionStorage.setItem("email", result.email || "");
 
-        alert("Public access granted. Redirecting to Employee Attendance Page.");
-        window.location.href = "EmployeeAttendance.html";
-      }
-      else if (result.usertype === "employee") {
-        sessionStorage.setItem("employeeId", result.id);
-        sessionStorage.setItem("employeeName", result.username);
-        sessionStorage.setItem("department", result.department);
-        sessionStorage.setItem("designation", result.designation);
-        sessionStorage.setItem("usertype", result.usertype);
-        sessionStorage.setItem("gender", result.gender);
-        sessionStorage.setItem("email", result.email);
-        
-        if (result.profileImage) {
-          sessionStorage.setItem("profileImage", result.profileImage);
-        }
-        
-        alert("Employee login successful. Welcome " + (result.username || 'User'));
-        window.location.href = "EmployeePortal.html";
-        
-      } else {
-        alert("Login successful. Welcome " + (result.username || 'User'));
-        window.location.href = "EmployeePortal.html";    
-      }
-    })
-    .catch(error => {
-      console.error("❌ Login failed:", error);
+      alert("Public access granted. Redirecting to Employee Attendance Page.");
+      window.location.href = "EmployeeAttendance.html";
+    }
+    else if (result.usertype === "employee") {
+      sessionStorage.setItem("employeeId", result.id);
+      sessionStorage.setItem("employeeName", result.username);
+      sessionStorage.setItem("department", result.department);
+      sessionStorage.setItem("designation", result.designation);
+      sessionStorage.setItem("usertype", result.usertype);
+      sessionStorage.setItem("gender", result.gender);
+      sessionStorage.setItem("email", result.email);
       
-      let errorMessage = "Login failed: " + error.message;
-      
-      if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
-        errorMessage = `🔗 Connection failed!\n\nPossible issues:\n1. Backend service not running\n2. Network connectivity\n3. CORS configuration\n4. Wrong API endpoint\n\nTechnical: ${error.message}`;
-      } else if (error.message.includes('All URLs failed')) {
-        errorMessage = `🎯 All API endpoints failed!\n\nChecked URLs:\n${API_URLS.map((url, i) => `${i+1}. ${url}`).join('\n')}\n\nCheck console for details.`;
+      if (result.profileImage) {
+        sessionStorage.setItem("profileImage", result.profileImage);
       }
       
-      alert(errorMessage);
-    })
-    .finally(() => {
-      submitButton.textContent = originalText;
-      submitButton.disabled = false;
-    });
+      alert("Employee login successful. Welcome " + (result.username || 'User'));
+      window.location.href = "EmployeePortal.html";
+      
+    } else {
+      alert("Login successful. Welcome " + (result.username || 'User'));
+      window.location.href = "EmployeePortal.html";    
+    }
+  })
+  .catch(error => {
+    console.error('❌ Login failed:', error);
+    
+    let errorMessage = `Login failed: ${error.message}`;
+    
+    if (error.message.includes('Failed to fetch')) {
+      errorMessage = `🔗 Connection failed!\n\nChecked URL: ${CORRECT_API_URL}\n\nPossible issues:\n1. Zoho Catalyst service not running\n2. CORS configuration\n3. Network connectivity\n\nTechnical: ${error.message}`;
+    }
+    
+    alert(errorMessage);
+  })
+  .finally(() => {
+    submitButton.textContent = originalText;
+    submitButton.disabled = false;
+  });
 });
 </script>
  </body>
