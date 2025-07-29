@@ -241,9 +241,8 @@
   </div>
 <script>
 // Corrected URL - removed /server/maxmocattendance part:
-const CORRECT_API_URL = "https://maxmocattendance-50029336824.development.catalystappsail.in/api/login";
+const CORRECT_API_URL = "https://maxmocattendance-50029336824.development.catalystappsail.in/login";
 
-// Complete working script:
 document.getElementById("loginForm").addEventListener("submit", function(event) {
   event.preventDefault();
 
@@ -259,7 +258,7 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
   submitButton.textContent = 'Logging in...';
   submitButton.disabled = true;
 
-  console.log('🚀 Using correct Catalyst URL:', CORRECT_API_URL);
+  console.log('🚀 Using correct URL (without /api):', CORRECT_API_URL);
   console.log('📤 Sending login data:', data);
 
   fetch(CORRECT_API_URL, {
@@ -274,11 +273,10 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
   })
   .then(response => {
     console.log('📨 Response status:', response.status);
-    console.log('📨 Response OK:', response.ok);
     
     if (!response.ok) {
       return response.text().then(text => {
-        console.error('❌ Error response body:', text);
+        console.error('❌ Error response:', text);
         throw new Error(`HTTP ${response.status}: ${text}`);
       });
     }
@@ -287,12 +285,10 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
   .then(result => {
     console.log('✅ Login successful:', result);
     
-    // Store session data based on user type
     if (result.usertype === "admin") {
       sessionStorage.setItem("adminId", result.id);
       sessionStorage.setItem("adminEmail", result.email);
       sessionStorage.setItem("usertype", result.usertype);
-      
       alert(result.message || "Admin login successful");
       window.location.href = "AdmDashboard.html";
       
@@ -302,11 +298,10 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
       sessionStorage.setItem("department", "Public");
       sessionStorage.setItem("usertype", "public");
       sessionStorage.setItem("email", result.email || "");
-
       alert("Public access granted. Redirecting to Employee Attendance Page.");
       window.location.href = "EmployeeAttendance.html";
-    }
-    else if (result.usertype === "employee") {
+      
+    } else if (result.usertype === "employee") {
       sessionStorage.setItem("employeeId", result.id);
       sessionStorage.setItem("employeeName", result.username);
       sessionStorage.setItem("department", result.department);
@@ -321,22 +316,11 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
       
       alert("Employee login successful. Welcome " + (result.username || 'User'));
       window.location.href = "EmployeePortal.html";
-      
-    } else {
-      alert("Login successful. Welcome " + (result.username || 'User'));
-      window.location.href = "EmployeePortal.html";    
     }
   })
   .catch(error => {
     console.error('❌ Login failed:', error);
-    
-    let errorMessage = `Login failed: ${error.message}`;
-    
-    if (error.message.includes('Failed to fetch')) {
-      errorMessage = `🔗 Connection failed!\n\nChecked URL: ${CORRECT_API_URL}\n\nPossible issues:\n1. Zoho Catalyst service not running\n2. CORS configuration\n3. Network connectivity\n\nTechnical: ${error.message}`;
-    }
-    
-    alert(errorMessage);
+    alert(`Login failed: ${error.message}`);
   })
   .finally(() => {
     submitButton.textContent = originalText;
