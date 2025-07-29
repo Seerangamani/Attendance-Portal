@@ -240,8 +240,8 @@
     </form>
   </div>
 <script>
-// Corrected URL - removed /server/maxmocattendance part:
-const CORRECT_API_URL = "https://maxmocattendance-50029336824.development.catalystappsail.in/login";
+// API URL with /api prefix
+const CORRECT_API_URL = "https://maxmocattendance-50029336824.development.catalystappsail.in/api/login";
 
 document.getElementById("loginForm").addEventListener("submit", function(event) {
   event.preventDefault();
@@ -258,7 +258,7 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
   submitButton.textContent = 'Logging in...';
   submitButton.disabled = true;
 
-  console.log('🚀 Using correct URL (without /api):', CORRECT_API_URL);
+  console.log('🚀 Using API URL with /api prefix:', CORRECT_API_URL);
   console.log('📤 Sending login data:', data);
 
   fetch(CORRECT_API_URL, {
